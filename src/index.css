@@ -241,3 +241,15 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* RTL animation overrides */
+@keyframes list-item-in-rtl {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes list-item-out-rtl {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-20px); }
+}
+[dir="rtl"] .animate-list-item { animation-name: list-item-in-rtl; }
+[dir="rtl"] .animate-list-item-out { animation-name: list-item-out-rtl; }

@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
+import { useLanguage } from '../i18n/LanguageContext'
 
 export default function PinInput({ length = 4, onComplete, error, errorKey }) {
   const [digits, setDigits] = useState(Array(length).fill(''))
   const [shaking, setShaking] = useState(false)
   const refs = useRef([])
+  const { t } = useLanguage()
 
   useEffect(() => {
     refs.current[0]?.focus()
@@ -66,7 +68,7 @@ export default function PinInput({ length = 4, onComplete, error, errorKey }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="flex gap-3" onPaste={handlePaste}>
+      <div className="flex gap-3" dir="ltr" onPaste={handlePaste}>
         {digits.map((digit, i) => (
           <input
             key={i}
@@ -74,7 +76,7 @@ export default function PinInput({ length = 4, onComplete, error, errorKey }) {
             type="text"
             inputMode="numeric"
             maxLength={1}
-            aria-label={`PIN digit ${i + 1}`}
+            aria-label={t('pinDigit', { n: i + 1 })}
             value={digit ? '●' : ''}
             onChange={(e) => {
               const raw = e.target.value.replace('●', '')

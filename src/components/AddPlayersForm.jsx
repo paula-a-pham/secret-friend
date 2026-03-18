@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useLanguage } from '../i18n/LanguageContext'
 
 export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
   const [names, setNames] = useState([])
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
+  const { t } = useLanguage()
 
   function addName(e) {
     e.preventDefault()
@@ -11,7 +13,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
     if (!trimmed) return
     const allNames = [...existingNames, ...names]
     if (allNames.some((p) => p.toLowerCase() === trimmed.toLowerCase())) {
-      setError('Name already exists')
+      setError(t('nameAlreadyExists'))
       return
     }
     setNames([...names, trimmed])
@@ -25,17 +27,20 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
 
   function handleConfirm() {
     if (names.length < 2) {
-      setError('Add at least 2 players')
+      setError(t('addAtLeast2'))
       return
     }
     onConfirm(names)
   }
 
+  const countKey = names.length === 1 ? 'newPlayerCount_one' : 'newPlayerCount_other'
+  const countText = t(countKey, { count: names.length })
+
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-4 mb-6 animate-fade-in">
-      <h2 className="text-lg font-bold text-primary-900 mb-1">Add New Players</h2>
+      <h2 className="text-lg font-bold text-primary-900 mb-1">{t('addNewPlayersTitle')}</h2>
       <p className="text-primary-600/60 text-sm mb-4">
-        New players will join the draw and pick their secret friend.
+        {t('newPlayersDesc')}
       </p>
 
       <form onSubmit={addName} className="flex gap-2 mb-3">
@@ -43,7 +48,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter a name..."
+          placeholder={t('enterName')}
           className="flex-1 px-3 py-2 rounded-lg border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400"
           autoFocus
         />
@@ -51,7 +56,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
           type="submit"
           className="px-4 py-2 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-lg transition-[transform,background-color] duration-150"
         >
-          Add
+          {t('add')}
         </button>
       </form>
 
@@ -75,7 +80,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
       )}
 
       <p className="text-primary-600/60 text-xs mb-3">
-        {names.length} new player{names.length !== 1 ? 's' : ''}
+        {countText}
       </p>
 
       {error && (
@@ -87,14 +92,14 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
           onClick={onCancel}
           className="flex-1 py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-[transform,background-color] duration-150"
         >
-          Cancel
+          {t('cancel')}
         </button>
         <button
           onClick={handleConfirm}
           disabled={names.length < 2}
           className="flex-1 py-3 px-4 bg-accent-500 hover:bg-accent-600 active:scale-95 disabled:bg-accent-200 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-[transform,background-color] duration-150"
         >
-          Add & Draw
+          {t('addAndDraw')}
         </button>
       </div>
     </div>

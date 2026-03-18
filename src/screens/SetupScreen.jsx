@@ -2,6 +2,7 @@ import { useState } from 'react'
 import PinInput from '../components/PinInput'
 import { tapVibrate, successVibrate } from '../utils/haptics'
 import { playSuccess } from '../utils/sounds'
+import { useLanguage } from '../i18n/LanguageContext'
 
 export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBackToPin }) {
   const [participants, setParticipants] = useState([])
@@ -9,6 +10,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
   const [error, setError] = useState('')
   const [removing, setRemoving] = useState(null)
   const [pinSuccess, setPinSuccess] = useState(false)
+  const { t } = useLanguage()
 
   function handlePinComplete(value) {
     setError('')
@@ -23,7 +25,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
     const trimmed = name.trim()
     if (!trimmed) return
     if (participants.some((p) => p.toLowerCase() === trimmed.toLowerCase())) {
-      setError('Name already added')
+      setError(t('nameAlreadyAdded'))
       return
     }
     tapVibrate()
@@ -44,7 +46,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
 
   function handleStart() {
     if (participants.length < 3) {
-      setError('Need at least 3 participants')
+      setError(t('needAtLeast3'))
       return
     }
     tapVibrate()
@@ -60,9 +62,9 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
           <button
             onClick={onBack}
             className="text-primary-600 font-medium mb-8 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
-            aria-label="Go back to home"
+            aria-label={t('goBackHome')}
           >
-            <span className="text-xl leading-none">&larr;</span> Back
+            <span className="text-xl leading-none">{t('backArrow')}</span> {t('back')}
           </button>
 
           {pinSuccess ? (
@@ -70,7 +72,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
               <div className="w-20 h-20 rounded-full bg-emerald-100/80 flex items-center justify-center mx-auto mb-6">
                 <span className="text-4xl">&#10003;</span>
               </div>
-              <p className="text-xl font-bold text-emerald-600">PIN Set!</p>
+              <p className="text-xl font-bold text-emerald-600">{t('pinSet')}</p>
             </div>
           ) : (
             <>
@@ -78,10 +80,10 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
                 <span className="text-3xl">🔑</span>
               </div>
               <h1 className="text-2xl font-bold text-primary-900 mb-2">
-                Set Organizer PIN
+                {t('setOrganizerPin')}
               </h1>
               <p className="text-primary-600/60 mb-8">
-                You'll need this to view all pairs at the end
+                {t('pinDescription')}
               </p>
 
               <PinInput onComplete={handlePinComplete} error={error} />
@@ -92,19 +94,22 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
     )
   }
 
+  const countKey = participants.length === 1 ? 'participantCount_one' : 'participantCount_other'
+  const countText = t(countKey, { count: participants.length })
+
   return (
     <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 px-6 py-8">
       <div className="max-w-md mx-auto animate-fade-in">
         <button
           onClick={onBackToPin}
           className="text-primary-600 font-medium mb-6 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
-          aria-label="Go back to PIN setup"
+          aria-label={t('goBackToPin')}
         >
-          <span className="text-xl leading-none">&larr;</span> Back
+          <span className="text-xl leading-none">{t('backArrow')}</span> {t('back')}
         </button>
 
         <h1 className="text-2xl font-bold text-primary-900 mb-6">
-          Add Participants
+          {t('addParticipants')}
         </h1>
 
         <form onSubmit={addParticipant} className="flex gap-2 mb-4">
@@ -112,16 +117,16 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter a name..."
+            placeholder={t('enterName')}
             className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 text-lg transition-shadow duration-150"
             autoFocus
-            aria-label="Participant name"
+            aria-label={t('participantName')}
           />
           <button
             type="submit"
             className="px-5 py-3 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
           >
-            Add
+            {t('add')}
           </button>
         </form>
 
@@ -145,7 +150,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
                 <button
                   onClick={() => removeParticipant(i)}
                   className="text-primary-300 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
-                  aria-label={`Remove ${p}`}
+                  aria-label={t('removeName', { name: p })}
                 >
                   &times;
                 </button>
@@ -155,9 +160,8 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
         )}
 
         <p className="text-primary-600/60 text-sm mb-2" aria-live="polite">
-          {participants.length} participant{participants.length !== 1 ? 's' : ''}{' '}
-          added
-          {participants.length < 3 && ` (need at least 3)`}
+          {countText}
+          {participants.length < 3 && ` ${t('needMinimum')}`}
         </p>
 
         <button
@@ -165,7 +169,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
           disabled={!canStart}
           className="w-full mt-8 py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 disabled:bg-primary-300 disabled:cursor-not-allowed text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
         >
-          Start Drawing!
+          {t('startDrawing')}
         </button>
       </div>
     </div>

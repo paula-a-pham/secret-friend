@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { tapVibrate } from '../utils/haptics'
+import { useLanguage } from '../i18n/LanguageContext'
 
 const particles = [
   { size: 8, color: '#fda4af', top: '12%', left: '10%', duration: '4s', delay: '0s' },
@@ -12,6 +13,7 @@ const particles = [
 
 export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGame }) {
   const [showConfirm, setShowConfirm] = useState(false)
+  const { t } = useLanguage()
 
   return (
     <div className="min-h-svh flex flex-col items-center justify-center bg-gradient-to-b from-primary-50 to-accent-50 px-6 relative overflow-hidden">
@@ -34,40 +36,40 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
       ))}
 
       <div className="flex flex-col items-center gap-6 relative z-10">
-        {/* Icon — floats + stagger 1 */}
+        {/* Icon */}
         <div className="animate-bounce-in-down" style={{ animationDuration: '0.65s' }}>
           <img
             src="/icon.svg"
-            alt="Gift box"
+            alt={t('giftBoxAlt')}
             className="w-28 h-28 drop-shadow-lg animate-float"
           />
         </div>
 
-        {/* Title + subtitle — stagger 2 */}
+        {/* Title + subtitle */}
         <div
           className="text-center animate-fade-in"
           style={{ animationDuration: '0.55s', animationDelay: '200ms' }}
         >
           <h1 className="text-4xl font-bold text-primary-900 tracking-tight">
-            Secret Friend
+            {t('secretFriend')}
           </h1>
           <p className="mt-2 text-primary-700/70 text-lg">
-            Draw names, exchange gifts, have fun!
+            {t('tagline')}
           </p>
         </div>
 
-        {/* Buttons — stagger 3 */}
+        {/* Buttons */}
         <div
           className="flex flex-col gap-3 w-full max-w-xs mt-4 animate-fade-in"
           style={{ animationDuration: '0.55s', animationDelay: '400ms' }}
           role="navigation"
-          aria-label="Game options"
+          aria-label={t('gameOptions')}
         >
           <button
             onClick={() => { tapVibrate(); onNewGame() }}
             className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
           >
-            Start New Game
+            {t('startNewGame')}
           </button>
 
           {hasSavedGame && (
@@ -76,7 +78,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
                 onClick={() => { tapVibrate(); onContinue() }}
                 className="w-full py-4 px-6 bg-white/70 backdrop-blur-sm hover:bg-white/90 active:scale-95 text-primary-700 font-semibold rounded-2xl text-lg shadow-md border border-white/30 transition-[transform,background-color,box-shadow] duration-150"
               >
-                Continue Game
+                {t('continueGame')}
               </button>
 
               {showConfirm ? (
@@ -84,23 +86,23 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
                   className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/30 p-4 text-center animate-fade-in shadow-lg"
                   style={{ animationDuration: '0.55s' }}
                   role="alertdialog"
-                  aria-label="Confirm reset"
+                  aria-label={t('confirmReset')}
                 >
                   <p className="text-primary-900 font-medium mb-3">
-                    This will delete your saved game. Are you sure?
+                    {t('confirmDeleteMessage')}
                   </p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setShowConfirm(false)}
                       className="flex-1 py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all"
                     >
-                      Cancel
+                      {t('cancel')}
                     </button>
                     <button
                       onClick={() => { tapVibrate(); onReset(); setShowConfirm(false) }}
                       className="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
                     >
-                      Reset
+                      {t('reset')}
                     </button>
                   </div>
                 </div>
@@ -109,7 +111,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
                   onClick={() => setShowConfirm(true)}
                   className="w-full py-3 px-6 text-red-400 hover:text-red-600 font-medium text-sm transition-colors duration-150"
                 >
-                  Reset Everything
+                  {t('resetEverything')}
                 </button>
               )}
             </>

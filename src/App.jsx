@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { loadGame, saveGame, clearGame } from './utils/storage'
+import { LanguageProvider } from './i18n/LanguageContext'
 import HomeScreen from './screens/HomeScreen'
 import SetupScreen from './screens/SetupScreen'
 import DrawScreen from './screens/DrawScreen'
 import ResultsScreen from './screens/ResultsScreen'
 import GameIdeaButton from './components/GameIdeaButton'
+import LanguageToggle from './components/LanguageToggle'
 
 const INITIAL_STATE = {
   phase: 'home',
@@ -207,9 +209,10 @@ export default function App() {
   }
 
   return (
-    <>
+    <LanguageProvider>
       {screen}
       <GameIdeaButton />
-    </>
+      <LanguageToggle />
+    </LanguageProvider>
   )
 }

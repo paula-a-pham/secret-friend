@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti'
 import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
 import { playTick, playReveal, playSuccess } from '../utils/sounds'
 import { tapVibrate, revealVibrate, successVibrate } from '../utils/haptics'
+import { useLanguage } from '../i18n/LanguageContext'
 
 const SHUFFLE_DURATION = 2000
 const SHUFFLE_INTERVAL_START = 50
@@ -20,6 +21,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
   const [removing, setRemoving] = useState(null)
   const [shuffleProgress, setShuffleProgress] = useState(0)
   const shuffleRef = useRef(null)
+  const { t } = useLanguage()
 
   const allDrawn = drawn.length === participants.length
   const canRemove = participants.length > 3
@@ -29,7 +31,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     const trimmed = newName.trim()
     if (!trimmed) return
     if (participants.some((p) => p.toLowerCase() === trimmed.toLowerCase())) {
-      setAddError('Name already exists')
+      setAddError(t('nameAlreadyExists'))
       return
     }
     tapVibrate()
@@ -175,7 +177,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
       <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-6">
         <div className="text-center">
           <p className={`text-primary-600/70 text-lg mb-4 ${isRevealed ? 'animate-fade-in' : ''}`}>
-            {isRevealed ? 'Your secret friend is' : 'Drawing...'}
+            {isRevealed ? t('yourSecretFriendIs') : t('drawing')}
           </p>
 
           <div className="mb-8">{shuffleContent}</div>
@@ -186,13 +188,13 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                 onClick={handleReject}
                 className="flex-1 h-14 px-6 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-2xl text-lg border border-primary-200 transition-all whitespace-nowrap"
               >
-                Draw Again
+                {t('drawAgain')}
               </button>
               <button
                 onClick={handleAccept}
                 className="flex-1 h-14 px-6 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-all whitespace-nowrap"
               >
-                Accept
+                {t('accept')}
               </button>
             </div>
           )}
@@ -209,19 +211,19 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
             <span className="text-3xl">🤫</span>
           </div>
           <h2 className="text-2xl font-bold text-primary-900 mb-2">
-            Hand the device to
+            {t('handDeviceTo')}
           </h2>
           <p className="text-3xl font-bold text-primary-600 mb-6">
             {currentPerson}
           </p>
           <p className="text-primary-600/60 mb-8">
-            Everyone else, please look away!
+            {t('lookAway')}
           </p>
           <button
             onClick={startDraw}
             className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
           >
-            I'm {currentPerson} — Draw!
+            {t('imPersonDraw', { name: currentPerson })}
           </button>
         </div>
       </div>
@@ -235,13 +237,13 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
         <button
           onClick={onBack}
           className="text-primary-600 font-medium mb-6 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
-          aria-label="Go back to home"
+          aria-label={t('goBackHome')}
         >
-          <span className="text-xl leading-none">&larr;</span> Back
+          <span className="text-xl leading-none">{t('backArrow')}</span> {t('back')}
         </button>
-        <h1 className="text-2xl font-bold text-primary-900 mb-2">Draw Names</h1>
+        <h1 className="text-2xl font-bold text-primary-900 mb-2">{t('drawNames')}</h1>
         <p className="text-primary-600/60 mb-6" aria-live="polite">
-          {drawn.length} of {participants.length} have drawn
+          {t('drawProgress', { drawn: drawn.length, total: participants.length })}
         </p>
 
         {/* Progress bar */}
@@ -251,7 +253,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
           aria-valuenow={drawn.length}
           aria-valuemin={0}
           aria-valuemax={participants.length}
-          aria-label="Drawing progress"
+          aria-label={t('drawingProgress')}
         >
           <div
             className="h-full bg-primary-500 rounded-full transition-all duration-500"
@@ -282,7 +284,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                   className={`flex-1 flex items-center justify-between px-4 py-4 ${
                     hasDrawn ? 'cursor-not-allowed' : 'cursor-pointer'
                   }`}
-                  aria-label={hasDrawn ? `${p} has already drawn` : `${p} — tap to draw`}
+                  aria-label={hasDrawn ? t('alreadyDrawn', { name: p }) : t('tapToDrawAria', { name: p })}
                 >
                   <span
                     className={`font-medium transition-colors duration-150 ${hasDrawn ? 'text-primary-400' : 'text-primary-900'}`}
@@ -292,7 +294,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                   {hasDrawn ? (
                     <span className="text-emerald-500 text-xl" aria-hidden="true">&#10003;</span>
                   ) : (
-                    <span className="text-primary-300 text-sm">Tap to draw</span>
+                    <span className="text-primary-300 text-sm">{t('tapToDraw')}</span>
                   )}
                 </button>
                 {!hasDrawn && canRemove && (
@@ -307,7 +309,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                       }, 250)
                     }}
                     className="pr-4 pl-2 py-4 text-primary-300 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
-                    aria-label={`Remove ${p}`}
+                    aria-label={t('removeName', { name: p })}
                   >
                     &times;
                   </button>
@@ -324,15 +326,15 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="Add new player..."
+                placeholder={t('addNewPlayer')}
                 className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 text-lg transition-shadow duration-150"
-                aria-label="New player name"
+                aria-label={t('newPlayerName')}
               />
               <button
                 type="submit"
                 className="px-5 py-3 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
               >
-                Add
+                {t('add')}
               </button>
             </form>
             {addError && (
@@ -346,7 +348,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
             onClick={() => { successVibrate(); playSuccess(); onComplete() }}
             className="w-full py-4 px-6 bg-accent-500 hover:bg-accent-600 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-accent-200 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
           >
-            All Done — View Results
+            {t('allDoneViewResults')}
           </button>
         )}
       </div>
