@@ -6,7 +6,6 @@ import SetupScreen from './screens/SetupScreen'
 import DrawScreen from './screens/DrawScreen'
 import ResultsScreen from './screens/ResultsScreen'
 import GameIdeaButton from './components/GameIdeaButton'
-import LanguageToggle from './components/LanguageToggle'
 
 const INITIAL_STATE = {
   phase: 'home',
@@ -212,7 +211,6 @@ export default function App() {
     <LanguageProvider>
       {screen}
       <GameIdeaButton />
-      <LanguageToggle />
     </LanguageProvider>
   )
 }

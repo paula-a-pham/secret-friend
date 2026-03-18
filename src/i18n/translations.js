@@ -95,6 +95,10 @@ export const translations = {
     newPlayerCount_other: '{count} new players',
     addAndDraw: 'Add & Draw',
 
+    // FAB
+    menu: 'Menu',
+    close: 'Close',
+
     // PIN Input
     pinDigit: 'PIN digit {n}',
   },
@@ -194,6 +198,10 @@ export const translations = {
     newPlayerCount_one: '\u0644\u0627\u0639\u0628 \u062c\u062f\u064a\u062f \u0648\u0627\u062d\u062f',
     newPlayerCount_other: '{count} \u0644\u0627\u0639\u0628\u064a\u0646 \u062c\u062f\u062f',
     addAndDraw: '\u0625\u0636\u0627\u0641\u0629 \u0648\u0633\u062d\u0628',
+
+    // FAB
+    menu: '\u0627\u0644\u0642\u0627\u0626\u0645\u0629',
+    close: '\u0625\u063a\u0644\u0627\u0642',
 
     // PIN Input
     pinDigit: '\u0631\u0642\u0645 PIN {n}',
