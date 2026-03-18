@@ -1,0 +1,355 @@
+import { useState, useEffect, useRef } from 'react'
+import confetti from 'canvas-confetti'
+import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
+import { playTick, playReveal, playSuccess } from '../utils/sounds'
+import { tapVibrate, revealVibrate, successVibrate } from '../utils/haptics'
+
+const SHUFFLE_DURATION = 2000
+const SHUFFLE_INTERVAL_START = 50
+const SHUFFLE_INTERVAL_END = 300
+
+export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, onRemovePlayer, onBack }) {
+  const { participants, assignments, drawn, pool } = game
+  const [phase, setPhase] = useState('list') // list | privacy | shuffling | reveal
+  const [currentPerson, setCurrentPerson] = useState(null)
+  const [drawnName, setDrawnName] = useState(null)
+  const [displayName, setDisplayName] = useState('')
+  const [swapData, setSwapData] = useState(null)
+  const [newName, setNewName] = useState('')
+  const [addError, setAddError] = useState('')
+  const [removing, setRemoving] = useState(null)
+  const [shuffleProgress, setShuffleProgress] = useState(0)
+  const shuffleRef = useRef(null)
+
+  const allDrawn = drawn.length === participants.length
+  const canRemove = participants.length > 3
+
+  function handleAddPlayer(e) {
+    e.preventDefault()
+    const trimmed = newName.trim()
+    if (!trimmed) return
+    if (participants.some((p) => p.toLowerCase() === trimmed.toLowerCase())) {
+      setAddError('Name already exists')
+      return
+    }
+    tapVibrate()
+    onAddPlayer(trimmed)
+    setNewName('')
+    setAddError('')
+  }
+
+  function startTurn(person) {
+    tapVibrate()
+    setCurrentPerson(person)
+    setPhase('privacy')
+  }
+
+  function startDraw() {
+    tapVibrate()
+    setPhase('shuffling')
+
+    let finalName
+    let swap = null
+
+    const available = getAvailableRecipients(pool, currentPerson, assignments)
+
+    if (available.length === 0) {
+      const result = performSwap(assignments, currentPerson)
+      finalName = result.drawnName
+      swap = result.updatedAssignments
+      setSwapData(swap)
+    } else {
+      finalName = drawRandom(available)
+      setSwapData(null)
+    }
+
+    setDrawnName(finalName)
+
+    const poolForDisplay = available.length > 0 ? available : [finalName]
+    if (poolForDisplay.length <= 1) {
+      setDisplayName(finalName)
+      setPhase('reveal')
+      return
+    }
+
+    const startTime = Date.now()
+    let lastUpdate = 0
+
+    function animate() {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / SHUFFLE_DURATION, 1)
+      const interval =
+        SHUFFLE_INTERVAL_START +
+        (SHUFFLE_INTERVAL_END - SHUFFLE_INTERVAL_START) * progress
+
+      if (elapsed - lastUpdate >= interval) {
+        const randomIdx = Math.floor(Math.random() * poolForDisplay.length)
+        setDisplayName(poolForDisplay[randomIdx])
+        setShuffleProgress(progress)
+        playTick()
+        lastUpdate = elapsed
+      }
+
+      if (progress < 1) {
+        shuffleRef.current = requestAnimationFrame(animate)
+      } else {
+        setDisplayName(finalName)
+        setShuffleProgress(1)
+        setPhase('reveal')
+      }
+    }
+
+    shuffleRef.current = requestAnimationFrame(animate)
+  }
+
+  function handleAccept() {
+    tapVibrate()
+    onAccept(currentPerson, drawnName, swapData)
+    setPhase('list')
+    setCurrentPerson(null)
+    setDrawnName(null)
+    setDisplayName('')
+  }
+
+  function handleReject() {
+    startDraw()
+  }
+
+  useEffect(() => {
+    return () => {
+      if (shuffleRef.current) cancelAnimationFrame(shuffleRef.current)
+    }
+  }, [])
+
+  // Sound + haptic on reveal
+  useEffect(() => {
+    if (phase !== 'reveal') return
+    playReveal()
+    revealVibrate()
+    const end = Date.now() + 1500
+    const colors = ['#e11d48', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#f97316']
+    function frame() {
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.6 },
+        colors,
+      })
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.6 },
+        colors,
+      })
+      if (Date.now() < end) requestAnimationFrame(frame)
+    }
+    frame()
+  }, [phase])
+
+  if (phase === 'shuffling' || phase === 'reveal') {
+    const isRevealed = phase === 'reveal'
+    const wobbleSpeed = isRevealed ? 0 : 0.15 + shuffleProgress * 0.4
+
+    const shuffleContent = isRevealed ? (
+      <div
+        className="bg-white/80 rounded-3xl border border-white/40 px-12 py-10 flex items-center justify-center gap-4 whitespace-nowrap animate-pop-in"
+        role="status"
+        aria-live="assertive"
+      >
+        <span className="text-3xl" aria-hidden="true">🎉</span>
+        <p className="text-5xl font-bold text-primary-900">{displayName}</p>
+        <span className="text-3xl" aria-hidden="true">🎉</span>
+      </div>
+    ) : (
+      <div
+        className="bg-white/80 rounded-3xl border border-white/40 px-10 py-8 whitespace-nowrap shuffle-card"
+        style={{ animationDuration: `0.8s, ${wobbleSpeed}s` }}
+      >
+        <p className="text-4xl font-bold text-primary-900">{displayName || '?'}</p>
+      </div>
+    )
+
+    return (
+      <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-6">
+        <div className="text-center">
+          <p className={`text-primary-600/70 text-lg mb-4 ${isRevealed ? 'animate-fade-in' : ''}`}>
+            {isRevealed ? 'Your secret friend is' : 'Drawing...'}
+          </p>
+
+          <div className="mb-8">{shuffleContent}</div>
+
+          {isRevealed && (
+            <div className="flex gap-3 animate-fade-in" style={{ animationDelay: '400ms' }}>
+              <button
+                onClick={handleReject}
+                className="flex-1 h-14 px-6 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-2xl text-lg border border-primary-200 transition-all whitespace-nowrap"
+              >
+                Draw Again
+              </button>
+              <button
+                onClick={handleAccept}
+                className="flex-1 h-14 px-6 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-all whitespace-nowrap"
+              >
+                Accept
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  if (phase === 'privacy') {
+    return (
+      <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-6">
+        <div className="animate-fade-in text-center max-w-sm">
+          <div className="w-20 h-20 rounded-full bg-primary-100/80 backdrop-blur-sm flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">🤫</span>
+          </div>
+          <h2 className="text-2xl font-bold text-primary-900 mb-2">
+            Hand the device to
+          </h2>
+          <p className="text-3xl font-bold text-primary-600 mb-6">
+            {currentPerson}
+          </p>
+          <p className="text-primary-600/60 mb-8">
+            Everyone else, please look away!
+          </p>
+          <button
+            onClick={startDraw}
+            className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+          >
+            I'm {currentPerson} — Draw!
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // List phase
+  return (
+    <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 px-6 py-8">
+      <div className="max-w-md mx-auto animate-fade-in">
+        <button
+          onClick={onBack}
+          className="text-primary-600 font-medium mb-6 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
+          aria-label="Go back to home"
+        >
+          <span className="text-xl leading-none">&larr;</span> Back
+        </button>
+        <h1 className="text-2xl font-bold text-primary-900 mb-2">Draw Names</h1>
+        <p className="text-primary-600/60 mb-6" aria-live="polite">
+          {drawn.length} of {participants.length} have drawn
+        </p>
+
+        {/* Progress bar */}
+        <div
+          className="w-full h-2 bg-primary-100/80 rounded-full mb-6 overflow-hidden"
+          role="progressbar"
+          aria-valuenow={drawn.length}
+          aria-valuemin={0}
+          aria-valuemax={participants.length}
+          aria-label="Drawing progress"
+        >
+          <div
+            className="h-full bg-primary-500 rounded-full transition-all duration-500"
+            style={{ width: `${(drawn.length / participants.length) * 100}%` }}
+          />
+        </div>
+
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 overflow-hidden mb-6">
+          {participants.map((p) => {
+            const hasDrawn = drawn.includes(p)
+            const isRemoving = removing === p
+            return (
+              <div
+                key={p}
+                className={`flex items-center border-b border-primary-50/50 last:border-b-0 ${
+                  isRemoving
+                    ? 'animate-list-item-out'
+                    : 'animate-list-item'
+                } ${
+                  hasDrawn
+                    ? 'opacity-50'
+                    : 'hover:bg-white/50 active:bg-white/70'
+                }`}
+              >
+                <button
+                  onClick={() => !hasDrawn && startTurn(p)}
+                  disabled={hasDrawn}
+                  className={`flex-1 flex items-center justify-between px-4 py-4 ${
+                    hasDrawn ? 'cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                  aria-label={hasDrawn ? `${p} has already drawn` : `${p} — tap to draw`}
+                >
+                  <span
+                    className={`font-medium transition-colors duration-150 ${hasDrawn ? 'text-primary-400' : 'text-primary-900'}`}
+                  >
+                    {p}
+                  </span>
+                  {hasDrawn ? (
+                    <span className="text-emerald-500 text-xl" aria-hidden="true">&#10003;</span>
+                  ) : (
+                    <span className="text-primary-300 text-sm">Tap to draw</span>
+                  )}
+                </button>
+                {!hasDrawn && canRemove && (
+                  <button
+                    onClick={() => {
+                      if (removing !== null) return
+                      tapVibrate()
+                      setRemoving(p)
+                      setTimeout(() => {
+                        onRemovePlayer(p)
+                        setRemoving(null)
+                      }, 250)
+                    }}
+                    className="pr-4 pl-2 py-4 text-primary-300 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
+                    aria-label={`Remove ${p}`}
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {!allDrawn && (
+          <>
+            <form onSubmit={handleAddPlayer} className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Add new player..."
+                className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 text-lg transition-shadow duration-150"
+                aria-label="New player name"
+              />
+              <button
+                type="submit"
+                className="px-5 py-3 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
+              >
+                Add
+              </button>
+            </form>
+            {addError && (
+              <p className="text-red-500 text-sm mb-4 font-medium" role="alert">{addError}</p>
+            )}
+          </>
+        )}
+
+        {allDrawn && (
+          <button
+            onClick={() => { successVibrate(); playSuccess(); onComplete() }}
+            className="w-full py-4 px-6 bg-accent-500 hover:bg-accent-600 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-accent-200 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
+          >
+            All Done — View Results
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
