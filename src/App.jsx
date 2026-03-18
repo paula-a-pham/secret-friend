@@ -4,6 +4,7 @@ import HomeScreen from './screens/HomeScreen'
 import SetupScreen from './screens/SetupScreen'
 import DrawScreen from './screens/DrawScreen'
 import ResultsScreen from './screens/ResultsScreen'
+import GameIdeaButton from './components/GameIdeaButton'
 
 const INITIAL_STATE = {
   phase: 'home',
@@ -205,5 +206,10 @@ export default function App() {
       screen = null
   }
 
-  return screen
+  return (
+    <>
+      {screen}
+      <GameIdeaButton />
+    </>
+  )
 }
