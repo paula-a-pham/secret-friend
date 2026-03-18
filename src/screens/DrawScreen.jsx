@@ -176,7 +176,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     return (
       <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-6">
         <div className="text-center">
-          <p className={`text-primary-600/70 text-lg mb-4 ${isRevealed ? 'animate-fade-in' : ''}`}>
+          <p className={`text-primary-700/80 text-lg mb-4 ${isRevealed ? 'animate-fade-in' : ''}`}>
             {isRevealed ? t('yourSecretFriendIs') : t('drawing')}
           </p>
 
@@ -216,7 +216,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
           <p className="text-3xl font-bold text-primary-600 mb-6">
             {currentPerson}
           </p>
-          <p className="text-primary-600/60 mb-8">
+          <p className="text-primary-700/80 mb-8">
             {t('lookAway')}
           </p>
           <button
@@ -242,7 +242,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
           <span className="text-xl leading-none">{t('backArrow')}</span> {t('back')}
         </button>
         <h1 className="text-2xl font-bold text-primary-900 mb-2">{t('drawNames')}</h1>
-        <p className="text-primary-600/60 mb-6" aria-live="polite">
+        <p className="text-primary-700/80 mb-6" aria-live="polite">
           {t('drawProgress', { drawn: drawn.length, total: participants.length })}
         </p>
 
@@ -281,20 +281,18 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                 <button
                   onClick={() => !hasDrawn && startTurn(p)}
                   disabled={hasDrawn}
-                  className={`flex-1 flex items-center justify-between px-4 py-4 ${
-                    hasDrawn ? 'cursor-not-allowed' : 'cursor-pointer'
-                  }`}
+                  className="flex-1 flex items-center justify-between px-4 py-4"
                   aria-label={hasDrawn ? t('alreadyDrawn', { name: p }) : t('tapToDrawAria', { name: p })}
                 >
                   <span
-                    className={`font-medium transition-colors duration-150 ${hasDrawn ? 'text-primary-400' : 'text-primary-900'}`}
+                    className={`font-medium transition-colors duration-150 ${hasDrawn ? 'text-primary-500' : 'text-primary-900'}`}
                   >
                     {p}
                   </span>
                   {hasDrawn ? (
                     <span className="text-emerald-500 text-xl" aria-hidden="true">&#10003;</span>
                   ) : (
-                    <span className="text-primary-300 text-sm">{t('tapToDraw')}</span>
+                    <span className="text-primary-500 text-sm">{t('tapToDraw')}</span>
                   )}
                 </button>
                 {!hasDrawn && canRemove && (
@@ -308,7 +306,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                         setRemoving(null)
                       }, 250)
                     }}
-                    className="pr-4 pl-2 py-4 text-primary-300 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
+                    className="pr-4 pl-2 py-4 text-primary-400 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
                     aria-label={t('removeName', { name: p })}
                   >
                     &times;
@@ -327,7 +325,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder={t('addNewPlayer')}
-                className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 text-lg transition-shadow duration-150"
+                className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg transition-shadow duration-150"
                 aria-label={t('newPlayerName')}
               />
               <button
@@ -346,7 +344,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
         {allDrawn && (
           <button
             onClick={() => { successVibrate(); playSuccess(); onComplete() }}
-            className="w-full py-4 px-6 bg-accent-500 hover:bg-accent-600 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-accent-200 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
+            className="w-full py-4 px-6 bg-accent-700 hover:bg-accent-800 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-accent-700/25 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
           >
             {t('allDoneViewResults')}
           </button>

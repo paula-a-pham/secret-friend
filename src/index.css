@@ -49,6 +49,15 @@ body {
   font-family: 'Inter', 'Cairo', sans-serif;
 }
 
+/* All interactive elements get pointer cursor */
+button:not(:disabled),
+[role="button"] {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
 @theme {
   --color-primary-50: var(--primary-50);
   --color-primary-100: var(--primary-100);
@@ -64,6 +73,8 @@ body {
   --color-accent-200: var(--accent-200);
   --color-accent-500: var(--accent-500);
   --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
 }
 
 /* Rose + Amber (default) */
@@ -82,6 +93,8 @@ body {
   --accent-200: #fde68a;
   --accent-500: #f59e0b;
   --accent-600: #d97706;
+  --accent-700: #b45309;
+  --accent-800: #92400e;
 }
 
 @keyframes shuffle {

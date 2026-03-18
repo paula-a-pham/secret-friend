@@ -39,7 +39,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-4 mb-6 animate-fade-in">
       <h2 className="text-lg font-bold text-primary-900 mb-1">{t('addNewPlayersTitle')}</h2>
-      <p className="text-primary-600/60 text-sm mb-4">
+      <p className="text-primary-700/80 text-sm mb-4">
         {t('newPlayersDesc')}
       </p>
 
@@ -49,7 +49,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={t('enterName')}
-          className="flex-1 px-3 py-2 rounded-lg border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400"
+          className="flex-1 px-3 py-2 rounded-lg border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
           autoFocus
         />
         <button
@@ -70,7 +70,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
               <span className="text-primary-900 font-medium text-sm">{name}</span>
               <button
                 onClick={() => removeName(i)}
-                className="text-primary-300 hover:text-red-500 text-lg leading-none transition-colors"
+                className="text-primary-400 hover:text-red-500 text-lg leading-none transition-colors"
               >
                 &times;
               </button>
@@ -79,7 +79,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
         </div>
       )}
 
-      <p className="text-primary-600/60 text-xs mb-3">
+      <p className="text-primary-700/80 text-xs mb-3">
         {countText}
       </p>
 
@@ -97,7 +97,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
         <button
           onClick={handleConfirm}
           disabled={names.length < 2}
-          className="flex-1 py-3 px-4 bg-accent-500 hover:bg-accent-600 active:scale-95 disabled:bg-accent-200 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-[transform,background-color] duration-150"
+          className="flex-1 py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 disabled:bg-accent-200 disabled:text-accent-700 text-white font-semibold rounded-xl transition-[transform,background-color] duration-150"
         >
           {t('addAndDraw')}
         </button>

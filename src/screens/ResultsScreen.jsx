@@ -14,7 +14,7 @@ function FlipCard({ giver, recipient, isRevealed, onFlip, delay = 0 }) {
       role="button"
       tabIndex={0}
       aria-label={isRevealed ? t('givesTo', { giver, recipient }) : t('revealPerson', { name: giver })}
-      className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-400 rounded-2xl flip-gpu"
+      className="focus:outline-none focus:ring-2 focus:ring-primary-400 rounded-2xl flip-gpu"
       style={{
         perspective: '800px',
         animation: `card-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms both`,
@@ -35,7 +35,7 @@ function FlipCard({ giver, recipient, isRevealed, onFlip, delay = 0 }) {
         >
           <p className="font-semibold text-primary-900 text-center text-lg break-words w-full">{giver}</p>
           <span className="text-3xl" aria-hidden="true">🎁</span>
-          <p className="text-primary-300 text-sm">{t('tapToReveal')}</p>
+          <p className="text-primary-500 text-sm">{t('tapToReveal')}</p>
         </div>
 
         {/* Back */}
@@ -46,9 +46,9 @@ function FlipCard({ giver, recipient, isRevealed, onFlip, delay = 0 }) {
             transform: 'rotateY(180deg)',
           }}
         >
-          <p className="text-primary-400 text-sm">{t('secretFriendLabel')}</p>
+          <p className="text-primary-600 text-sm">{t('secretFriendLabel')}</p>
           <span className="text-2xl" aria-hidden="true">🎁</span>
-          <p className="font-bold text-accent-600 text-xl text-center break-words w-full">{recipient}</p>
+          <p className="font-bold text-accent-700 text-xl text-center break-words w-full">{recipient}</p>
         </div>
       </div>
     </div>
@@ -110,7 +110,7 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }) {
               <h1 className="text-2xl font-bold text-primary-900 mb-2">
                 {t('viewResults')}
               </h1>
-              <p className="text-primary-600/60 mb-8">
+              <p className="text-primary-700/80 mb-8">
                 {t('enterPinToSee')}
               </p>
 
@@ -129,7 +129,7 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }) {
           {t('allPairs')}
         </h1>
 
-        <p className="text-primary-600/60 mb-4 text-center text-sm">
+        <p className="text-primary-700/80 mb-4 text-center text-sm">
           {t('tapCardToReveal')}
         </p>
 

@@ -82,7 +82,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
               <h1 className="text-2xl font-bold text-primary-900 mb-2">
                 {t('setOrganizerPin')}
               </h1>
-              <p className="text-primary-600/60 mb-8">
+              <p className="text-primary-700/80 mb-8">
                 {t('pinDescription')}
               </p>
 
@@ -118,7 +118,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t('enterName')}
-            className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 text-lg transition-shadow duration-150"
+            className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg transition-shadow duration-150"
             autoFocus
             aria-label={t('participantName')}
           />
@@ -149,7 +149,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
                 </div>
                 <button
                   onClick={() => removeParticipant(i)}
-                  className="text-primary-300 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
+                  className="text-primary-400 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
                   aria-label={t('removeName', { name: p })}
                 >
                   &times;
@@ -159,7 +159,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
           </div>
         )}
 
-        <p className="text-primary-600/60 text-sm mb-2" aria-live="polite">
+        <p className="text-primary-700/80 text-sm mb-2" aria-live="polite">
           {countText}
           {participants.length < 3 && ` ${t('needMinimum')}`}
         </p>
@@ -167,7 +167,7 @@ export default function SetupScreen({ step, pin, onPinSet, onStart, onBack, onBa
         <button
           onClick={handleStart}
           disabled={!canStart}
-          className="w-full mt-8 py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 disabled:bg-primary-300 disabled:cursor-not-allowed text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+          className="w-full mt-8 py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 disabled:bg-primary-200 disabled:text-primary-500 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
         >
           {t('startDrawing')}
         </button>
