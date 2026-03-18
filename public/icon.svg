@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="box" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="100%" stop-color="#e11d48"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect x="80" y="220" width="352" height="232" rx="24" fill="url(#box)"/>
+  <rect x="60" y="180" width="392" height="80" rx="16" fill="url(#box)" opacity="0.9"/>
+  <rect x="230" y="180" width="52" height="272" rx="4" fill="url(#ribbon)"/>
+  <rect x="60" y="200" width="392" height="40" rx="4" fill="url(#ribbon)"/>
+  <path d="M256 180 C256 180 200 100 160 100 C130 100 120 130 140 150 C160 170 256 180 256 180Z" fill="url(#ribbon)"/>
+  <path d="M256 180 C256 180 312 100 352 100 C382 100 392 130 372 150 C352 170 256 180 256 180Z" fill="url(#ribbon)"/>
+</svg>

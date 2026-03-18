@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-accent-50: var(--accent-50);
+  --color-accent-200: var(--accent-200);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+}
+
+/* Rose + Amber (default) */
+:root {
+  --primary-50: #fff1f2;
+  --primary-100: #ffe4e6;
+  --primary-200: #fecdd3;
+  --primary-300: #fda4af;
+  --primary-400: #fb7185;
+  --primary-500: #f43f5e;
+  --primary-600: #e11d48;
+  --primary-700: #be123c;
+  --primary-800: #9f1239;
+  --primary-900: #881337;
+  --accent-50: #fffbeb;
+  --accent-200: #fde68a;
+  --accent-500: #f59e0b;
+  --accent-600: #d97706;
+}
+
+@keyframes shuffle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.95); }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes card-enter {
+  0% { opacity: 0; transform: translateY(24px) scale(0.85); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.5); }
+  70% { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Shuffle glow pulse */
+@keyframes shuffle-glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(225, 29, 72, 0.15); }
+  50% { box-shadow: 0 4px 35px rgba(225, 29, 72, 0.45); }
+}
+
+/* Shuffle wobble — intensity controlled via animation-duration inline */
+@keyframes shuffle-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.shuffle-card {
+  animation: shuffle-glow 0.8s ease-in-out infinite, shuffle-wobble 0.2s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+/* Reveal card flip */
+.flip-container {
+  perspective: 800px;
+}
+.flip-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-out;
+}
+.flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flip-front, .flip-back {
+  backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+  position: absolute;
+  inset: 0;
+}
+
+/* Reveal celebration */
+@keyframes reveal-scale {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-reveal {
+  animation: reveal-scale 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+  will-change: transform, opacity;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-out;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.25s ease-out both;
+  will-change: transform, opacity;
+}
+
+.confetti-piece {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+/* List item animations */
+@keyframes list-item-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes list-item-out {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+.animate-list-item { animation: list-item-in 0.25s ease-out both; }
+.animate-list-item-out { animation: list-item-out 0.2s ease-out both; }
+
+/* GPU-promote cards that flip */
+.flip-gpu {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Pulse glow for enabled CTA */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 10px 15px -3px var(--color-primary-200), 0 0 0 0 rgba(225, 29, 72, 0.3); }
+  50% { box-shadow: 0 10px 15px -3px var(--color-primary-200), 0 0 0 10px rgba(225, 29, 72, 0); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Bounce in from top */
+@keyframes bounce-in-down {
+  0% { opacity: 0; transform: translateY(-60px); }
+  40% { opacity: 1; transform: translateY(8px); }
+  65% { transform: translateY(-4px); }
+  85% { transform: translateY(2px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-bounce-in-down {
+  animation: bounce-in-down 0.5s ease-out both;
+  will-change: transform, opacity;
+}
+
+/* Floating icon */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: gentle-float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Decorative particles */
+@keyframes particle-drift {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50% { transform: translateY(-18px) scale(1.15); opacity: 0.7; }
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particle-drift ease-in-out infinite;
+  will-change: transform, opacity;
+}
