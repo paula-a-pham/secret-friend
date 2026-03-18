@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 
@@ -13,7 +13,29 @@ const particles = [
 
 export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGame }) {
   const [showConfirm, setShowConfirm] = useState(false)
+  const [closing, setClosing] = useState(false)
   const { t } = useLanguage()
+
+  function openConfirm() {
+    tapVibrate()
+    setShowConfirm(true)
+    setClosing(false)
+  }
+
+  function closeConfirm() {
+    setClosing(true)
+    setTimeout(() => {
+      setShowConfirm(false)
+      setClosing(false)
+    }, 250)
+  }
+
+  useEffect(() => {
+    if (!showConfirm || closing) return
+    const handleKey = (e) => { if (e.key === 'Escape') closeConfirm() }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [showConfirm, closing])
 
   return (
     <div className="min-h-svh flex flex-col items-center justify-center bg-gradient-to-b from-primary-50 to-accent-50 px-6 relative overflow-hidden">
@@ -53,7 +75,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
           <h1 className="text-4xl font-bold text-primary-900 tracking-tight">
             {t('secretFriend')}
           </h1>
-          <p className="mt-2 text-primary-700/70 text-lg">
+          <p className="mt-2 text-primary-700/80 text-lg">
             {t('tagline')}
           </p>
         </div>
@@ -81,43 +103,51 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
                 {t('continueGame')}
               </button>
 
-              {showConfirm ? (
-                <div
-                  className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/30 p-4 text-center animate-fade-in shadow-lg"
-                  style={{ animationDuration: '0.55s' }}
-                  role="alertdialog"
-                  aria-label={t('confirmReset')}
-                >
-                  <p className="text-primary-900 font-medium mb-3">
-                    {t('confirmDeleteMessage')}
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setShowConfirm(false)}
-                      className="flex-1 py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all"
-                    >
-                      {t('cancel')}
-                    </button>
-                    <button
-                      onClick={() => { tapVibrate(); onReset(); setShowConfirm(false) }}
-                      className="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
-                    >
-                      {t('reset')}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowConfirm(true)}
-                  className="w-full py-3 px-6 text-red-400 hover:text-red-600 font-medium text-sm transition-colors duration-150"
-                >
-                  {t('resetEverything')}
-                </button>
-              )}
+              <button
+                onClick={openConfirm}
+                className="w-full py-3 px-6 text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-150"
+              >
+                {t('resetEverything')}
+              </button>
             </>
           )}
         </div>
       </div>
+
+      {/* Reset confirmation popup */}
+      {showConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-6"
+          onClick={closeConfirm}
+        >
+          <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
+
+          <div
+            className={`relative w-full max-w-sm bg-white rounded-2xl shadow-2xl p-6 ${closing ? 'animate-popup-out' : 'animate-popup-in'}`}
+            onClick={(e) => e.stopPropagation()}
+            role="alertdialog"
+            aria-label={t('confirmReset')}
+          >
+            <p className="text-primary-900 font-medium text-center mb-5">
+              {t('confirmDeleteMessage')}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={closeConfirm}
+                className="flex-1 py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={() => { tapVibrate(); onReset(); closeConfirm() }}
+                className="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
+              >
+                {t('reset')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
