@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Preview — Secret Friend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;600;700&family=Nunito:wght@400;600;700&family=Quicksand:wght@400;600;700&family=Comfortaa:wght@400;600;700&family=Fredoka:wght@400;600;700&family=Baloo+2:wght@400;600;700&family=Rubik:wght@400;600;700&family=Outfit:wght@400;600;700&family=Righteous&family=Lilita+One&family=Bubblegum+Sans&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Almarai:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Readex+Pro:wght@400;600;700&family=Changa:wght@400;600;700&family=El+Messiri:wght@400;600;700&family=Noto+Kufi+Arabic:wght@400;600;700&family=Marhey:wght@400;600;700&family=Baloo+Bhaijaan+2:wght@400;600;700&family=Lalezar&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0f0f0f;
+      color: #e5e5e5;
+      font-family: system-ui, sans-serif;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f43f5e, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 48px;
+      font-size: 0.95rem;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #222;
+    }
+
+    .section-title.en { color: #f43f5e; }
+    .section-title.ar { color: #f59e0b; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: all 0.2s ease;
+      cursor: default;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: #444;
+      background: #1f1f1f;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .card .font-name {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #666;
+      margin-bottom: 16px;
+      font-family: system-ui, sans-serif;
+    }
+
+    .card .preview {
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .card .preview-regular { font-weight: 400; font-size: 1.6rem; color: #999; }
+    .card .preview-semibold { font-weight: 600; font-size: 2rem; color: #ccc; }
+    .card .preview-bold    { font-weight: 700; font-size: 2.6rem; color: #fff; }
+
+    .card .number {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: system-ui, sans-serif;
+    }
+
+    .card.en .number { background: #f43f5e22; color: #f43f5e; }
+    .card.ar .number { background: #f59e0b22; color: #f59e0b; }
+
+    .card.ar .preview { direction: rtl; text-align: right; }
+
+    /* Pair preview section */
+    .pair-section {
+      margin-top: 20px;
+      margin-bottom: 60px;
+    }
+
+    .pair-card {
+      background: linear-gradient(135deg, #1a1a1a, #1f1a1a);
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      padding: 40px 36px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      transition: all 0.2s ease;
+    }
+
+    .pair-card:hover {
+      border-color: #444;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .pair-card .pair-en {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pair-card .pair-ar {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      direction: rtl;
+    }
+
+    .pair-card .pair-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #666;
+      font-family: system-ui, sans-serif;
+      margin-bottom: 8px;
+    }
+
+    .pair-card .divider {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(180deg, transparent, #333, transparent);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      .pair-card { flex-direction: column; gap: 20px; text-align: center; }
+      .pair-card .pair-ar { text-align: center; }
+      .pair-card .divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #333, transparent); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Font Preview</h1>
+  <p class="subtitle">Pick an English + Arabic font for "Secret Friend" / "الصديق السري"</p>
+
+  <!-- ENGLISH FONTS -->
+  <h2 class="section-title en">English Fonts</h2>
+  <div class="grid" id="en-grid"></div>
+
+  <!-- ARABIC FONTS -->
+  <h2 class="section-title ar">Arabic Fonts — الخطوط العربية</h2>
+  <div class="grid" id="ar-grid"></div>
+
+  <!-- PAIR PREVIEW -->
+  <h2 class="section-title" style="color:#e5e5e5;">Suggested Pairs</h2>
+  <div class="pair-section" id="pairs"></div>
+
+  <script>
+    const enFonts = [
+      "Poppins", "Inter", "Nunito", "Quicksand", "Comfortaa",
+      "Fredoka", "Baloo 2", "Rubik", "Outfit", "Righteous",
+      "Lilita One", "Bubblegum Sans"
+    ];
+
+    const arFonts = [
+      "Cairo", "Tajawal", "Noto Sans Arabic", "Almarai",
+      "IBM Plex Sans Arabic", "Readex Pro", "Changa",
+      "El Messiri", "Noto Kufi Arabic", "Marhey",
+      "Baloo Bhaijaan 2", "Lalezar"
+    ];
+
+    const enText = "Secret Friend";
+    const arText = "الصديق السري";
+
+    // Render English cards
+    const enGrid = document.getElementById("en-grid");
+    enFonts.forEach((font, i) => {
+      enGrid.innerHTML += `
+        <div class="card en">
+          <span class="number">${i + 1}</span>
+          <div class="font-name">${font}</div>
+          <div class="preview preview-regular" style="font-family:'${font}',sans-serif">${enText}</div>
+          <div class="preview preview-semibold" style="font-family:'${font}',sans-serif">${enText}</div>
+          <div class="preview preview-bold" style="font-family:'${font}',sans-serif">${enText}</div>
+        </div>`;
+    });
+
+    // Render Arabic cards
+    const arGrid = document.getElementById("ar-grid");
+    arFonts.forEach((font, i) => {
+      arGrid.innerHTML += `
+        <div class="card ar">
+          <span class="number">${i + 1}</span>
+          <div class="font-name">${font}</div>
+          <div class="preview preview-regular" style="font-family:'${font}',sans-serif">${arText}</div>
+          <div class="preview preview-semibold" style="font-family:'${font}',sans-serif">${arText}</div>
+          <div class="preview preview-bold" style="font-family:'${font}',sans-serif">${arText}</div>
+        </div>`;
+    });
+
+    // Suggested pairs
+    const pairs = [
+      ["Poppins", "Cairo"],
+      ["Nunito", "Tajawal"],
+      ["Fredoka", "Marhey"],
+      ["Outfit", "Readex Pro"],
+      ["Rubik", "Noto Sans Arabic"],
+      ["Comfortaa", "El Messiri"],
+      ["Quicksand", "Almarai"],
+      ["Lilita One", "Lalezar"],
+      ["Bubblegum Sans", "Baloo Bhaijaan 2"],
+    ];
+
+    const pairsContainer = document.getElementById("pairs");
+    pairs.forEach(([en, ar]) => {
+      pairsContainer.innerHTML += `
+        <div class="pair-card">
+          <div>
+            <div class="pair-label">English — ${en}</div>
+            <div class="pair-en" style="font-family:'${en}',sans-serif">${enText}</div>
+          </div>
+          <div class="divider"></div>
+          <div>
+            <div class="pair-label">Arabic — ${ar}</div>
+            <div class="pair-ar" style="font-family:'${ar}',sans-serif">${arText}</div>
+          </div>
+        </div>`;
+    });
+  </script>
+
+</body>
+</html>
