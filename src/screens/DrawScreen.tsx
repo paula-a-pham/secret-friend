@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
 import { playTick, playReveal, playSuccess } from '../utils/sounds'
 import { tapVibrate } from '../utils/haptics'
+import Modal from '../components/Modal'
 import { useLanguage } from '../i18n/useLanguage'
 import type { GameState, Assignments } from '../types'
 
@@ -31,6 +32,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
   const [addError, setAddError] = useState('')
   const [removing, setRemoving] = useState<string | null>(null)
   const [shuffleProgress, setShuffleProgress] = useState(0)
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
   const shuffleRef = useRef<number | null>(null)
   const { t } = useLanguage()
 
@@ -61,15 +63,20 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     let finalName: string
     let swap: Assignments | null = null
 
-    const available = getAvailableRecipients(pool, currentPerson!, assignments)
+    if (!currentPerson) return
+
+    const available = getAvailableRecipients(pool, currentPerson, assignments)
 
     if (available.length === 0) {
-      const result = performSwap(assignments, currentPerson!)
-      finalName = result!.drawnName
-      swap = result!.updatedAssignments
+      const result = performSwap(assignments, currentPerson)
+      if (!result) return
+      finalName = result.drawnName
+      swap = result.updatedAssignments
       setSwapData(swap)
     } else {
-      finalName = drawRandom(available)!
+      const picked = drawRandom(available)
+      if (!picked) return
+      finalName = picked
       setSwapData(null)
     }
 
@@ -114,7 +121,8 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
   }
 
   function handleAccept() {
-    onAccept(currentPerson!, drawnName!, swapData)
+    if (!currentPerson || !drawnName) return
+    onAccept(currentPerson, drawnName, swapData)
     setPhase('list')
     setCurrentPerson(null)
     setDrawnName(null)
@@ -233,7 +241,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
             onClick={startDraw}
             className="w-full py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
           >
-            {t('imPersonDraw', { name: currentPerson! })}
+            {t('imPersonDraw', { name: currentPerson ?? '' })}
           </button>
         </div>
       </div>
@@ -244,7 +252,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 px-4 sm:px-6 py-6 sm:py-8">
       <div className="max-w-sm sm:max-w-md mx-auto animate-fade-in">
         <button
-          onClick={onBack}
+          onClick={() => drawn.length > 0 ? setShowLeaveConfirm(true) : onBack()}
           className="text-primary-600 font-medium mb-5 sm:mb-6 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
           aria-label={t('goBackHome')}
         >
@@ -357,6 +365,33 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
           </button>
         )}
       </div>
+
+      <Modal
+        open={showLeaveConfirm}
+        onClose={() => setShowLeaveConfirm(false)}
+        role="alertdialog"
+        ariaLabel={t('confirmLeaveTitle')}
+        ariaDescribedBy="confirm-leave-msg"
+        className="p-5 sm:p-6"
+      >
+        <p id="confirm-leave-msg" className="text-primary-900 font-medium text-center mb-4 sm:mb-5 text-sm sm:text-base">
+          {t('confirmLeaveMessage')}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowLeaveConfirm(false)}
+            className="flex-1 py-2.5 sm:py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all text-sm sm:text-base"
+          >
+            {t('cancel')}
+          </button>
+          <button
+            onClick={() => { setShowLeaveConfirm(false); onBack() }}
+            className="flex-1 py-2.5 sm:py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
+          >
+            {t('leave')}
+          </button>
+        </div>
+      </Modal>
     </div>
   )
 }

@@ -58,6 +58,11 @@ export const translations: Record<string, Record<string, string>> = {
     alreadyDrawn: '{name} has already drawn',
     tapToDrawAria: '{name} \u2014 tap to draw',
 
+    // Draw - Leave confirmation
+    confirmLeaveTitle: 'Leave draw?',
+    confirmLeaveMessage: 'Your drawing progress will be lost. Are you sure?',
+    leave: 'Leave',
+
     // Results
     wrongPin: 'Wrong PIN',
     unlocked: 'Unlocked!',
@@ -105,6 +110,10 @@ export const translations: Record<string, Record<string, string>> = {
 
     // PIN Input
     pinDigit: 'PIN digit {n}',
+
+    // PWA
+    updateAvailable: 'New version available',
+    update: 'Update',
   },
 
   ar: {
@@ -164,6 +173,11 @@ export const translations: Record<string, Record<string, string>> = {
     alreadyDrawn: '{name} \u0633\u062d\u0628 \u0628\u0627\u0644\u0641\u0639\u0644',
     tapToDrawAria: '{name} \u2014 \u0627\u0646\u0642\u0631 \u0644\u0644\u0633\u062d\u0628',
 
+    // Draw - Leave confirmation
+    confirmLeaveTitle: '\u0645\u063a\u0627\u062f\u0631\u0629 \u0627\u0644\u0633\u062d\u0628\u061f',
+    confirmLeaveMessage: '\u0633\u064a\u062a\u0645 \u0641\u0642\u062f\u0627\u0646 \u062a\u0642\u062f\u0645 \u0627\u0644\u0633\u062d\u0628. \u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f\u061f',
+    leave: '\u0645\u063a\u0627\u062f\u0631\u0629',
+
     // Results
     wrongPin: '\u0631\u0645\u0632 PIN \u062e\u0627\u0637\u0626',
     unlocked: '\u062a\u0645 \u0627\u0644\u0641\u062a\u062d!',
@@ -211,5 +225,9 @@ export const translations: Record<string, Record<string, string>> = {
 
     // PIN Input
     pinDigit: '\u0631\u0642\u0645 PIN {n}',
+
+    // PWA
+    updateAvailable: '\u0625\u0635\u062f\u0627\u0631 \u062c\u062f\u064a\u062f \u0645\u062a\u0627\u062d',
+    update: '\u062a\u062d\u062f\u064a\u062b',
   },
 }
