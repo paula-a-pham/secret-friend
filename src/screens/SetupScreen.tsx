@@ -176,7 +176,7 @@ export default function SetupScreen({ step, pin = '', onPinSet, onStart, onBack,
         <button
           onClick={handleStart}
           disabled={!canStart}
-          className="w-full mt-6 sm:mt-8 py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 disabled:bg-primary-200 disabled:text-primary-500 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+          className="w-full mt-6 sm:mt-8 py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:shadow-none text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
         >
           {t('startDrawing')}
         </button>
