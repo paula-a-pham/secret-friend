@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 
 interface Particle {
@@ -34,7 +33,6 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
   const { t } = useLanguage()
 
   function openConfirm() {
-    tapVibrate()
     setShowConfirm(true)
     setClosing(false)
   }
@@ -55,75 +53,77 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
   }, [showConfirm, closing])
 
   return (
-    <div className="min-h-svh flex flex-col items-center justify-center bg-gradient-to-b from-primary-50 to-accent-50 px-4 sm:px-6 relative overflow-hidden">
-      {particles.map((p, i) => (
-        <div
-          key={i}
-          className="particle"
-          style={{
-            width: p.size,
-            height: p.size,
-            backgroundColor: p.color,
-            top: p.top,
-            left: p.left,
-            right: p.right,
-            animationDuration: p.duration,
-            animationDelay: p.delay,
-          }}
-        />
-      ))}
-
-      <div className="flex flex-col items-center gap-5 sm:gap-6 relative z-10">
-        <div className="animate-bounce-in-down" style={{ animationDuration: '0.65s' }}>
-          <img
-            src="/icon.svg"
-            alt={t('giftBoxAlt')}
-            className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-lg animate-float"
+    <>
+      <div className="min-h-svh flex flex-col items-center justify-center bg-gradient-to-b from-primary-50 to-accent-50 px-4 sm:px-6 relative overflow-hidden">
+        {particles.map((p, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              width: p.size,
+              height: p.size,
+              backgroundColor: p.color,
+              top: p.top,
+              left: p.left,
+              right: p.right,
+              animationDuration: p.duration,
+              animationDelay: p.delay,
+            }}
           />
-        </div>
+        ))}
 
-        <div
-          className="text-center animate-fade-in"
-          style={{ animationDuration: '0.55s', animationDelay: '200ms' }}
-        >
-          <h1 className="text-3xl sm:text-4xl font-bold text-primary-900 tracking-tight">
-            {t('secretFriend')}
-          </h1>
-          <p className="mt-2 text-primary-700/80 text-base sm:text-lg">
-            {t('tagline')}
-          </p>
-        </div>
+        <div className="flex flex-col items-center gap-5 sm:gap-6 relative z-10">
+          <div className="animate-bounce-in-down" style={{ animationDuration: '0.65s' }}>
+            <img
+              src="/icon.svg"
+              alt={t('giftBoxAlt')}
+              className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-lg animate-float"
+            />
+          </div>
 
-        <div
-          className="flex flex-col gap-3 w-full max-w-[280px] sm:max-w-xs mt-3 sm:mt-4 animate-fade-in"
-          style={{ animationDuration: '0.55s', animationDelay: '400ms' }}
-          role="navigation"
-          aria-label={t('gameOptions')}
-        >
-          <button
-            onClick={() => { tapVibrate(); onNewGame() }}
-            className="w-full py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+          <div
+            className="text-center animate-fade-in"
+            style={{ animationDuration: '0.55s', animationDelay: '200ms' }}
           >
-            {t('startNewGame')}
-          </button>
+            <h1 className="text-3xl sm:text-4xl font-bold text-primary-900 tracking-tight">
+              {t('secretFriend')}
+            </h1>
+            <p className="mt-2 text-primary-700/80 text-base sm:text-lg">
+              {t('tagline')}
+            </p>
+          </div>
 
-          {hasSavedGame && (
-            <>
-              <button
-                onClick={() => { tapVibrate(); onContinue() }}
-                className="w-full py-3.5 sm:py-4 px-6 bg-white/70 backdrop-blur-sm hover:bg-white/90 active:scale-95 text-primary-700 font-semibold rounded-2xl text-base sm:text-lg shadow-md border border-white/30 transition-[transform,background-color,box-shadow] duration-150"
-              >
-                {t('continueGame')}
-              </button>
+          <div
+            className="flex flex-col gap-3 w-full max-w-[280px] sm:max-w-xs mt-3 sm:mt-4 animate-fade-in"
+            style={{ animationDuration: '0.55s', animationDelay: '400ms' }}
+            role="navigation"
+            aria-label={t('gameOptions')}
+          >
+            <button
+              onClick={onNewGame}
+              className="w-full py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+            >
+              {t('startNewGame')}
+            </button>
 
-              <button
-                onClick={openConfirm}
-                className="w-full py-3 px-6 text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-150"
-              >
-                {t('resetEverything')}
-              </button>
-            </>
-          )}
+            {hasSavedGame && (
+              <>
+                <button
+                  onClick={onContinue}
+                  className="w-full py-3.5 sm:py-4 px-6 bg-white/70 backdrop-blur-sm hover:bg-white/90 active:scale-95 text-primary-700 font-semibold rounded-2xl text-base sm:text-lg shadow-md border border-white/30 transition-[transform,background-color,box-shadow] duration-150"
+                >
+                  {t('continueGame')}
+                </button>
+
+                <button
+                  onClick={openConfirm}
+                  className="w-full py-3 px-6 text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-150"
+                >
+                  {t('resetEverything')}
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -151,7 +151,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
                 {t('cancel')}
               </button>
               <button
-                onClick={() => { tapVibrate(); onReset(); closeConfirm() }}
+                onClick={() => { onReset(); closeConfirm() }}
                 className="flex-1 py-2.5 sm:py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
               >
                 {t('reset')}
@@ -160,6 +160,6 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
