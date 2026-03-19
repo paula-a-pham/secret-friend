@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { loadGame, saveGame, clearGame } from './utils/storage'
 import { LanguageProvider } from './i18n/LanguageContext'
-import HomeScreen from './screens/HomeScreen'
-import SetupScreen from './screens/SetupScreen'
-import DrawScreen from './screens/DrawScreen'
-import ResultsScreen from './screens/ResultsScreen'
 import GameIdeaButton from './components/GameIdeaButton'
+import ReloadPrompt from './components/ReloadPrompt'
 import type { GameState, Assignments } from './types'
+
+const HomeScreen = lazy(() => import('./screens/HomeScreen'))
+const SetupScreen = lazy(() => import('./screens/SetupScreen'))
+const DrawScreen = lazy(() => import('./screens/DrawScreen'))
+const ResultsScreen = lazy(() => import('./screens/ResultsScreen'))
 
 const INITIAL_STATE: GameState = {
   phase: 'home',
@@ -211,9 +213,16 @@ export default function App() {
   return (
     <LanguageProvider>
       <main>
-        {screen}
+        <Suspense fallback={
+          <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          </div>
+        }>
+          {screen}
+        </Suspense>
       </main>
       <GameIdeaButton />
+      <ReloadPrompt />
     </LanguageProvider>
   )
 }
