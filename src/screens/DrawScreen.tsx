@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
+import { clearGame } from '../utils/storage'
 import { playTick, playReveal, playSuccess } from '../utils/sounds'
 import { tapVibrate } from '../utils/haptics'
 import Modal from '../components/Modal'
@@ -385,7 +386,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
             {t('cancel')}
           </button>
           <button
-            onClick={() => { setShowLeaveConfirm(false); onBack() }}
+            onClick={() => { setShowLeaveConfirm(false); clearGame(); onBack() }}
             className="flex-1 py-2.5 sm:py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
           >
             {t('leave')}
