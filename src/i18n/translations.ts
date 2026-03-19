@@ -25,7 +25,7 @@ export const translations: Record<string, Record<string, string>> = {
     // Setup - PIN
     pinSet: 'PIN Set!',
     setOrganizerPin: 'Set Organizer PIN',
-    pinDescription: "You'll need this to view all pairs at the end",
+    pinDescription: "You'll need this to view all secret friends at the end",
     goBackHome: 'Go back to home',
 
     // Setup - Players
@@ -62,8 +62,8 @@ export const translations: Record<string, Record<string, string>> = {
     wrongPin: 'Wrong PIN',
     unlocked: 'Unlocked!',
     viewResults: 'View Results',
-    enterPinToSee: 'Enter the organizer PIN to see all pairs',
-    allPairs: 'All Pairs',
+    enterPinToSee: 'Enter the organizer PIN to see all secret friends',
+    allMatches: 'Secret Friends',
     tapCardToReveal: 'Tap a card to reveal the secret friend',
     tapToReveal: 'Tap to reveal',
     secretFriendLabel: 'Secret friend',
@@ -131,7 +131,7 @@ export const translations: Record<string, Record<string, string>> = {
     // Setup - PIN
     pinSet: '\u062a\u0645 \u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0631\u0645\u0632!',
     setOrganizerPin: '\u062a\u0639\u064a\u064a\u0646 \u0631\u0645\u0632 PIN \u0644\u0644\u0645\u0646\u0638\u0645',
-    pinDescription: '\u0633\u062a\u062d\u062a\u0627\u062c \u0647\u0630\u0627 \u0627\u0644\u0631\u0645\u0632 \u0644\u0639\u0631\u0636 \u062c\u0645\u064a\u0639 \u0627\u0644\u0623\u0632\u0648\u0627\u062c \u0641\u064a \u0627\u0644\u0646\u0647\u0627\u064a\u0629',
+    pinDescription: '\u0633\u062a\u062d\u062a\u0627\u062c \u0647\u0630\u0627 \u0627\u0644\u0631\u0645\u0632 \u0644\u0639\u0631\u0636 \u062c\u0645\u064a\u0639 \u0627\u0644\u0623\u0635\u062f\u0642\u0627\u0621 \u0627\u0644\u0633\u0631\u064a\u064a\u0646 \u0641\u064a \u0627\u0644\u0646\u0647\u0627\u064a\u0629',
     goBackHome: '\u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u0644\u0631\u0626\u064a\u0633\u064a\u0629',
 
     // Setup - Players
@@ -168,8 +168,8 @@ export const translations: Record<string, Record<string, string>> = {
     wrongPin: '\u0631\u0645\u0632 PIN \u062e\u0627\u0637\u0626',
     unlocked: '\u062a\u0645 \u0627\u0644\u0641\u062a\u062d!',
     viewResults: '\u0639\u0631\u0636 \u0627\u0644\u0646\u062a\u0627\u0626\u062c',
-    enterPinToSee: '\u0623\u062f\u062e\u0644 \u0631\u0645\u0632 PIN \u0644\u0644\u0645\u0646\u0638\u0645 \u0644\u0639\u0631\u0636 \u062c\u0645\u064a\u0639 \u0627\u0644\u0623\u0632\u0648\u0627\u062c',
-    allPairs: '\u062c\u0645\u064a\u0639 \u0627\u0644\u0623\u0632\u0648\u0627\u062c',
+    enterPinToSee: '\u0623\u062f\u062e\u0644 \u0631\u0645\u0632 PIN \u0644\u0644\u0645\u0646\u0638\u0645 \u0644\u0639\u0631\u0636 \u062c\u0645\u064a\u0639 \u0627\u0644\u0623\u0635\u062f\u0642\u0627\u0621 \u0627\u0644\u0633\u0631\u064a\u064a\u0646',
+    allMatches: '\u0627\u0644\u0623\u0635\u062f\u0642\u0627\u0621 \u0627\u0644\u0633\u0631\u064a\u0648\u0646',
     tapCardToReveal: '\u0627\u0646\u0642\u0631 \u0639\u0644\u0649 \u0628\u0637\u0627\u0642\u0629 \u0644\u0643\u0634\u0641 \u0627\u0644\u0635\u062f\u064a\u0642 \u0627\u0644\u0633\u0631\u064a',
     tapToReveal: '\u0627\u0646\u0642\u0631 \u0644\u0644\u0643\u0634\u0641',
     secretFriendLabel: '\u0627\u0644\u0635\u062f\u064a\u0642 \u0627\u0644\u0633\u0631\u064a',

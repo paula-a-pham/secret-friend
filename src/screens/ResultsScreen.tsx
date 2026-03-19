@@ -139,7 +139,7 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }: ResultsScr
     <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 px-4 sm:px-6 py-6 sm:py-8">
       <div className="max-w-lg sm:max-w-2xl mx-auto animate-fade-in">
         <h1 className="text-xl sm:text-2xl font-bold text-primary-900 mb-3 sm:mb-4 text-center">
-          {t('allPairs')}
+          {t('allMatches')}
         </h1>
 
         <p className="text-primary-700/80 mb-3 sm:mb-4 text-center text-xs sm:text-sm">
