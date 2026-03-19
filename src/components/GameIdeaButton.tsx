@@ -1,11 +1,11 @@
 import { useState, useEffect, type MouseEvent } from 'react'
 import { isMuted, toggleMute } from '../utils/sounds'
+import Modal from './Modal'
 import { useLanguage } from '../i18n/useLanguage'
 
 export default function GameIdeaButton() {
   const [expanded, setExpanded] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
-  const [closingInfo, setClosingInfo] = useState(false)
   const [soundMuted, setSoundMuted] = useState(isMuted)
   const { t, lang, toggleLanguage } = useLanguage()
 
@@ -29,26 +29,16 @@ export default function GameIdeaButton() {
     e.stopPropagation()
     setExpanded(false)
     setShowInfo(true)
-    setClosingInfo(false)
-  }
-
-  function handleCloseInfo() {
-    setClosingInfo(true)
-    setTimeout(() => {
-      setShowInfo(false)
-      setClosingInfo(false)
-    }, 250)
   }
 
   useEffect(() => {
+    if (showInfo || !expanded) return
     function handleKey(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
-      if (showInfo && !closingInfo) handleCloseInfo()
-      else if (expanded) setExpanded(false)
+      if (e.key === 'Escape') setExpanded(false)
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [expanded, showInfo, closingInfo])
+  }, [expanded, showInfo])
 
   return (
     <>
@@ -138,75 +128,67 @@ export default function GameIdeaButton() {
         </button>
       </div>
 
-      {showInfo && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center px-3 sm:px-4 pb-4 sm:pb-6"
-          onClick={handleCloseInfo}
-        >
-          <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closingInfo ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
+      <Modal
+        open={showInfo}
+        onClose={() => setShowInfo(false)}
+        ariaLabel={t('howToPlay')}
+        maxWidth="max-w-lg"
+        className="p-4 sm:p-6 overflow-y-auto max-h-[80vh] scrollbar-hide"
+      >
+        <div className="text-center mb-3 sm:mb-4">
+          <span className="text-xs font-semibold uppercase tracking-wider text-accent-700">
+            {t('howToPlay')}
+          </span>
+        </div>
 
-          <div
-            className={`relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 overflow-y-auto max-h-[80vh] scrollbar-hide ${closingInfo ? 'animate-popup-out' : 'animate-popup-in'}`}
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-label={t('howToPlay')}
-          >
-            <div className="text-center mb-3 sm:mb-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-accent-700">
-                {t('howToPlay')}
-              </span>
-            </div>
+        <h3 className="text-lg sm:text-xl font-bold text-primary-900 mb-3 text-center">
+          🎁 {t('secretFriend')} 🎁
+        </h3>
 
-            <h3 className="text-lg sm:text-xl font-bold text-primary-900 mb-3 text-center">
-              🎁 {t('secretFriend')} 🎁
-            </h3>
+        <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-primary-700/80 leading-relaxed">
+          <div>
+            <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('whatIsIt')}</h4>
+            <p className="text-center">
+              {t('whatIsItDesc')}
+            </p>
+          </div>
 
-            <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-primary-700/80 leading-relaxed">
-              <div>
-                <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('whatIsIt')}</h4>
-                <p className="text-center">
-                  {t('whatIsItDesc')}
-                </p>
-              </div>
+          <div>
+            <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('howItWorks')}</h4>
+            <ul className="space-y-1.5">
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks1')}</li>
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks2')}</li>
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks3')}</li>
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks4')}</li>
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks5')}</li>
+            </ul>
+          </div>
 
-              <div>
-                <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('howItWorks')}</h4>
-                <ul className="space-y-1.5">
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks1')}</li>
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks2')}</li>
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks3')}</li>
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks4')}</li>
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('howItWorks5')}</li>
-                </ul>
-              </div>
+          <div>
+            <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('rules')}</h4>
+            <ul className="space-y-1.5">
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('rules1')}</li>
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('rules2')}</li>
+            </ul>
+          </div>
 
-              <div>
-                <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('rules')}</h4>
-                <ul className="space-y-1.5">
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('rules1')}</li>
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('rules2')}</li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('tips')}</h4>
-                <ul className="space-y-1.5">
-                  <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('tips1')}</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex gap-2 mt-4 sm:mt-5">
-              <button
-                onClick={handleCloseInfo}
-                className="flex-1 py-2.5 sm:py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 text-white font-semibold rounded-xl text-sm transition-all duration-150"
-              >
-                {t('gotIt')}
-              </button>
-            </div>
+          <div>
+            <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('tips')}</h4>
+            <ul className="space-y-1.5">
+              <li className="flex gap-2"><span className="text-accent-700 font-bold">•</span>{t('tips1')}</li>
+            </ul>
           </div>
         </div>
-      )}
+
+        <div className="flex gap-2 mt-4 sm:mt-5">
+          <button
+            onClick={() => setShowInfo(false)}
+            className="flex-1 py-2.5 sm:py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 text-white font-semibold rounded-xl text-sm transition-all duration-150"
+          >
+            {t('gotIt')}
+          </button>
+        </div>
+      </Modal>
     </>
   )
 }

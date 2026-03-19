@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
+import Modal from '../components/Modal'
 import { useLanguage } from '../i18n/useLanguage'
 
 interface Particle {
@@ -29,44 +30,13 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGame }: HomeScreenProps) {
   const [showConfirm, setShowConfirm] = useState(false)
-  const [closing, setClosing] = useState(false)
-  const dialogRef = useRef<HTMLDivElement>(null)
   const resetTriggerRef = useRef<HTMLButtonElement>(null)
   const { t } = useLanguage()
 
-  function openConfirm() {
-    setShowConfirm(true)
-    setClosing(false)
+  function handleCloseConfirm() {
+    setShowConfirm(false)
+    resetTriggerRef.current?.focus()
   }
-
-  const closeConfirm = useCallback(() => {
-    setClosing(true)
-    setTimeout(() => {
-      setShowConfirm(false)
-      setClosing(false)
-      resetTriggerRef.current?.focus()
-    }, 250)
-  }, [])
-
-  useEffect(() => {
-    if (!showConfirm || closing) return
-    const dialog = dialogRef.current
-    if (dialog) {
-      const firstBtn = dialog.querySelector<HTMLButtonElement>('button')
-      firstBtn?.focus()
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') { closeConfirm(); return }
-      if (e.key !== 'Tab' || !dialog) return
-      const focusable = dialog.querySelectorAll<HTMLElement>('button, [tabindex]:not([tabindex="-1"])')
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [showConfirm, closing, closeConfirm])
 
   return (
     <>
@@ -133,7 +103,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
 
                 <button
                   ref={resetTriggerRef}
-                  onClick={openConfirm}
+                  onClick={() => setShowConfirm(true)}
                   className="w-full py-3 px-6 text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-150"
                 >
                   {t('resetEverything')}
@@ -144,41 +114,33 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
         </div>
       </div>
 
-      {showConfirm && (
-        <div
-          className="fixed inset-0 z-[60] flex items-end justify-center px-3 sm:px-4 pb-4 sm:pb-6"
-          onClick={closeConfirm}
-        >
-          <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
-
-          <div
-            ref={dialogRef}
-            className={`relative w-full max-w-sm bg-white rounded-2xl shadow-2xl p-5 sm:p-6 ${closing ? 'animate-popup-out' : 'animate-popup-in'}`}
-            onClick={(e) => e.stopPropagation()}
-            role="alertdialog"
-            aria-label={t('confirmReset')}
-            aria-describedby="confirm-reset-msg"
+      <Modal
+        open={showConfirm}
+        onClose={handleCloseConfirm}
+        role="alertdialog"
+        ariaLabel={t('confirmReset')}
+        ariaDescribedBy="confirm-reset-msg"
+        zIndex="z-[60]"
+        className="p-5 sm:p-6"
+      >
+        <p id="confirm-reset-msg" className="text-primary-900 font-medium text-center mb-4 sm:mb-5 text-sm sm:text-base">
+          {t('confirmDeleteMessage')}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={handleCloseConfirm}
+            className="flex-1 py-2.5 sm:py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all text-sm sm:text-base"
           >
-            <p id="confirm-reset-msg" className="text-primary-900 font-medium text-center mb-4 sm:mb-5 text-sm sm:text-base">
-              {t('confirmDeleteMessage')}
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={closeConfirm}
-                className="flex-1 py-2.5 sm:py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all text-sm sm:text-base"
-              >
-                {t('cancel')}
-              </button>
-              <button
-                onClick={() => { onReset(); closeConfirm() }}
-                className="flex-1 py-2.5 sm:py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
-              >
-                {t('reset')}
-              </button>
-            </div>
-          </div>
+            {t('cancel')}
+          </button>
+          <button
+            onClick={() => { onReset(); handleCloseConfirm() }}
+            className="flex-1 py-2.5 sm:py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
+          >
+            {t('reset')}
+          </button>
         </div>
-      )}
+      </Modal>
     </>
   )
 }
