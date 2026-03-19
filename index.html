@@ -3,15 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#e11d48" />
+    <meta name="description" content="Secret Friend is a fun gift-exchange game for groups. Draw names, exchange gifts, and have fun with friends, family, or coworkers!" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Secret Friend — Gift Exchange Game" />
+    <meta property="og:description" content="Draw names, exchange gifts, and have fun with friends, family, or coworkers!" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Secret Friend — Gift Exchange Game" />
+    <meta name="twitter:description" content="Draw names, exchange gifts, and have fun with friends, family, or coworkers!" />
+
+    <!-- Apple PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="apple-touch-icon" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <title>Secret Friend</title>
   </head>
   <body>
     <script>(function(){var l=localStorage.getItem('sf-lang')||'en';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr'})()</script>
+    <noscript>
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;text-align:center;padding:2rem;">
+        <p>Please enable JavaScript to use Secret Friend.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
