@@ -6,8 +6,9 @@ import SetupScreen from './screens/SetupScreen'
 import DrawScreen from './screens/DrawScreen'
 import ResultsScreen from './screens/ResultsScreen'
 import GameIdeaButton from './components/GameIdeaButton'
+import type { GameState, Assignments } from './types'
 
-const INITIAL_STATE = {
+const INITIAL_STATE: GameState = {
   phase: 'home',
   participants: [],
   pin: '',
@@ -17,7 +18,7 @@ const INITIAL_STATE = {
 }
 
 export default function App() {
-  const [game, setGame] = useState(() => {
+  const [game, setGame] = useState<GameState>(() => {
     const saved = loadGame()
     return {
       ...INITIAL_STATE,
@@ -31,7 +32,7 @@ export default function App() {
     }
   }, [game])
 
-  const hasSavedGame = game._hasSave
+  const hasSavedGame = !!game._hasSave
 
   function handleNewGame() {
     const saved = loadGame()
@@ -42,7 +43,7 @@ export default function App() {
     })
   }
 
-  function handlePinSet(pinValue) {
+  function handlePinSet(pinValue: string) {
     setGame((prev) => ({ ...prev, phase: 'setup-players', pin: pinValue }))
   }
 
@@ -55,7 +56,7 @@ export default function App() {
     if (saved) setGame(saved)
   }
 
-  function handleStartDraw(participants, pin) {
+  function handleStartDraw(participants: string[], pin: string) {
     clearGame()
     setGame({
       ...INITIAL_STATE,
@@ -69,7 +70,7 @@ export default function App() {
     })
   }
 
-  function handleAccept(person, recipient, swapAssignments) {
+  function handleAccept(person: string, recipient: string, swapAssignments: Assignments | null) {
     setGame((prev) => {
       const newAssignments = swapAssignments
         ? { ...swapAssignments, [person]: recipient }
@@ -91,7 +92,7 @@ export default function App() {
     setGame((prev) => ({ ...prev, phase: 'results' }))
   }
 
-  function handleRemovePlayer(name) {
+  function handleRemovePlayer(name: string) {
     setGame((prev) => {
       let participants = prev.participants.filter((p) => p !== name)
       let pool = prev.pool.filter((p) => p !== name)
@@ -133,7 +134,7 @@ export default function App() {
     })
   }
 
-  function handleAddPlayer(name) {
+  function handleAddPlayer(name: string) {
     setGame((prev) => ({
       ...prev,
       participants: [...prev.participants, name],
@@ -141,7 +142,7 @@ export default function App() {
     }))
   }
 
-  function handleAddPlayers(newNames) {
+  function handleAddPlayers(newNames: string[]) {
     setGame((prev) => ({
       ...prev,
       phase: 'draw',

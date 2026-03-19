@@ -1,12 +1,12 @@
-let ctx = null
+let ctx: AudioContext | null = null
 
-function getCtx() {
-  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)()
+function getCtx(): AudioContext {
+  if (!ctx) ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
   if (ctx.state === 'suspended') ctx.resume()
   return ctx
 }
 
-function playNote(freq, duration, volume = 0.1, type = 'sine', delay = 0) {
+function playNote(freq: number, duration: number, volume = 0.1, type: OscillatorType = 'sine', delay = 0): void {
   try {
     const c = getCtx()
     const osc = c.createOscillator()
@@ -24,26 +24,25 @@ function playNote(freq, duration, volume = 0.1, type = 'sine', delay = 0) {
   }
 }
 
-// Throttled tick — at most once per 120ms to avoid flooding the audio graph
 let lastTick = 0
-export function playTick() {
+export function playTick(): void {
   const now = performance.now()
   if (now - lastTick < 120) return
   lastTick = now
   playNote(800, 0.04, 0.06)
 }
 
-export function playReveal() {
+export function playReveal(): void {
   playNote(523, 0.25, 0.1, 'sine', 0)
   playNote(659, 0.25, 0.1, 'sine', 0.12)
   playNote(784, 0.3, 0.12, 'sine', 0.24)
 }
 
-export function playFlip() {
+export function playFlip(): void {
   playNote(400, 0.1, 0.05)
 }
 
-export function playSuccess() {
+export function playSuccess(): void {
   playNote(523, 0.15, 0.08, 'sine', 0)
   playNote(659, 0.15, 0.08, 'sine', 0.1)
   playNote(784, 0.15, 0.08, 'sine', 0.2)

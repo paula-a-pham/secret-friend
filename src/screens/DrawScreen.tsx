@@ -1,32 +1,44 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type FormEvent } from 'react'
 import confetti from 'canvas-confetti'
 import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
 import { playTick, playReveal, playSuccess } from '../utils/sounds'
 import { tapVibrate, revealVibrate, successVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
+import type { GameState, Assignments } from '../types'
 
 const SHUFFLE_DURATION = 2000
 const SHUFFLE_INTERVAL_START = 50
 const SHUFFLE_INTERVAL_END = 300
 
-export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, onRemovePlayer, onBack }) {
+type DrawPhase = 'list' | 'privacy' | 'shuffling' | 'reveal'
+
+interface DrawScreenProps {
+  game: GameState
+  onAccept: (person: string, recipient: string, swapAssignments: Assignments | null) => void
+  onComplete: () => void
+  onAddPlayer: (name: string) => void
+  onRemovePlayer: (name: string) => void
+  onBack: () => void
+}
+
+export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, onRemovePlayer, onBack }: DrawScreenProps) {
   const { participants, assignments, drawn, pool } = game
-  const [phase, setPhase] = useState('list') // list | privacy | shuffling | reveal
-  const [currentPerson, setCurrentPerson] = useState(null)
-  const [drawnName, setDrawnName] = useState(null)
+  const [phase, setPhase] = useState<DrawPhase>('list')
+  const [currentPerson, setCurrentPerson] = useState<string | null>(null)
+  const [drawnName, setDrawnName] = useState<string | null>(null)
   const [displayName, setDisplayName] = useState('')
-  const [swapData, setSwapData] = useState(null)
+  const [swapData, setSwapData] = useState<Assignments | null>(null)
   const [newName, setNewName] = useState('')
   const [addError, setAddError] = useState('')
-  const [removing, setRemoving] = useState(null)
+  const [removing, setRemoving] = useState<string | null>(null)
   const [shuffleProgress, setShuffleProgress] = useState(0)
-  const shuffleRef = useRef(null)
+  const shuffleRef = useRef<number | null>(null)
   const { t } = useLanguage()
 
   const allDrawn = drawn.length === participants.length
   const canRemove = participants.length > 3
 
-  function handleAddPlayer(e) {
+  function handleAddPlayer(e: FormEvent) {
     e.preventDefault()
     const trimmed = newName.trim()
     if (!trimmed) return
@@ -40,7 +52,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     setAddError('')
   }
 
-  function startTurn(person) {
+  function startTurn(person: string) {
     tapVibrate()
     setCurrentPerson(person)
     setPhase('privacy')
@@ -50,18 +62,18 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     tapVibrate()
     setPhase('shuffling')
 
-    let finalName
-    let swap = null
+    let finalName: string
+    let swap: Assignments | null = null
 
-    const available = getAvailableRecipients(pool, currentPerson, assignments)
+    const available = getAvailableRecipients(pool, currentPerson!, assignments)
 
     if (available.length === 0) {
-      const result = performSwap(assignments, currentPerson)
-      finalName = result.drawnName
-      swap = result.updatedAssignments
+      const result = performSwap(assignments, currentPerson!)
+      finalName = result!.drawnName
+      swap = result!.updatedAssignments
       setSwapData(swap)
     } else {
-      finalName = drawRandom(available)
+      finalName = drawRandom(available)!
       setSwapData(null)
     }
 
@@ -106,7 +118,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
 
   function handleAccept() {
     tapVibrate()
-    onAccept(currentPerson, drawnName, swapData)
+    onAccept(currentPerson!, drawnName!, swapData)
     setPhase('list')
     setCurrentPerson(null)
     setDrawnName(null)
@@ -123,7 +135,6 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
     }
   }, [])
 
-  // Sound + haptic on reveal
   useEffect(() => {
     if (phase !== 'reveal') return
     playReveal()
@@ -156,43 +167,43 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
 
     const shuffleContent = isRevealed ? (
       <div
-        className="bg-white/80 rounded-3xl border border-white/40 px-12 py-10 flex items-center justify-center gap-4 whitespace-nowrap animate-pop-in"
+        className="bg-white/80 rounded-3xl border border-white/40 px-8 sm:px-12 py-8 sm:py-10 flex items-center justify-center gap-3 sm:gap-4 whitespace-nowrap animate-pop-in"
         role="status"
         aria-live="assertive"
       >
-        <span className="text-3xl" aria-hidden="true">🎉</span>
-        <p className="text-5xl font-bold text-primary-900">{displayName}</p>
-        <span className="text-3xl" aria-hidden="true">🎉</span>
+        <span className="text-2xl sm:text-3xl" aria-hidden="true">🎉</span>
+        <p className="text-3xl sm:text-5xl font-bold text-primary-900">{displayName}</p>
+        <span className="text-2xl sm:text-3xl" aria-hidden="true">🎉</span>
       </div>
     ) : (
       <div
-        className="bg-white/80 rounded-3xl border border-white/40 px-10 py-8 whitespace-nowrap shuffle-card"
+        className="bg-white/80 rounded-3xl border border-white/40 px-8 sm:px-10 py-6 sm:py-8 whitespace-nowrap shuffle-card"
         style={{ animationDuration: `0.8s, ${wobbleSpeed}s` }}
       >
-        <p className="text-4xl font-bold text-primary-900">{displayName || '?'}</p>
+        <p className="text-3xl sm:text-4xl font-bold text-primary-900">{displayName || '?'}</p>
       </div>
     )
 
     return (
-      <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-6">
+      <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-4 sm:px-6">
         <div className="text-center">
-          <p className={`text-primary-700/80 text-lg mb-4 ${isRevealed ? 'animate-fade-in' : ''}`}>
+          <p className={`text-primary-700/80 text-base sm:text-lg mb-3 sm:mb-4 ${isRevealed ? 'animate-fade-in' : ''}`}>
             {isRevealed ? t('yourSecretFriendIs') : t('drawing')}
           </p>
 
-          <div className="mb-8">{shuffleContent}</div>
+          <div className="mb-6 sm:mb-8">{shuffleContent}</div>
 
           {isRevealed && (
             <div className="flex gap-3 animate-fade-in" style={{ animationDelay: '400ms' }}>
               <button
                 onClick={handleReject}
-                className="flex-1 h-14 px-6 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-2xl text-lg border border-primary-200 transition-all whitespace-nowrap"
+                className="flex-1 h-12 sm:h-14 px-4 sm:px-6 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-2xl text-base sm:text-lg border border-primary-200 transition-all whitespace-nowrap"
               >
                 {t('drawAgain')}
               </button>
               <button
                 onClick={handleAccept}
-                className="flex-1 h-14 px-6 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-all whitespace-nowrap"
+                className="flex-1 h-12 sm:h-14 px-4 sm:px-6 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-all whitespace-nowrap"
               >
                 {t('accept')}
               </button>
@@ -205,50 +216,48 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
 
   if (phase === 'privacy') {
     return (
-      <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-6">
+      <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-4 sm:px-6">
         <div className="animate-fade-in text-center max-w-sm">
-          <div className="w-20 h-20 rounded-full bg-primary-100/80 backdrop-blur-sm flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl">🤫</span>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary-100/80 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 sm:mb-6">
+            <span className="text-2xl sm:text-3xl">🤫</span>
           </div>
-          <h2 className="text-2xl font-bold text-primary-900 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-primary-900 mb-2">
             {t('handDeviceTo')}
           </h2>
-          <p className="text-3xl font-bold text-primary-600 mb-6">
+          <p className="text-2xl sm:text-3xl font-bold text-primary-600 mb-5 sm:mb-6">
             {currentPerson}
           </p>
-          <p className="text-primary-700/80 mb-8">
+          <p className="text-primary-700/80 text-sm sm:text-base mb-6 sm:mb-8">
             {t('lookAway')}
           </p>
           <button
             onClick={startDraw}
-            className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+            className="w-full py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
           >
-            {t('imPersonDraw', { name: currentPerson })}
+            {t('imPersonDraw', { name: currentPerson! })}
           </button>
         </div>
       </div>
     )
   }
 
-  // List phase
   return (
-    <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 px-6 py-8">
-      <div className="max-w-md mx-auto animate-fade-in">
+    <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-sm sm:max-w-md mx-auto animate-fade-in">
         <button
           onClick={onBack}
-          className="text-primary-600 font-medium mb-6 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
+          className="text-primary-600 font-medium mb-5 sm:mb-6 flex items-center gap-1 hover:text-primary-800 transition-colors duration-150"
           aria-label={t('goBackHome')}
         >
           <span className="text-xl leading-none">{t('backArrow')}</span> {t('back')}
         </button>
-        <h1 className="text-2xl font-bold text-primary-900 mb-2">{t('drawNames')}</h1>
-        <p className="text-primary-700/80 mb-6" aria-live="polite">
+        <h1 className="text-xl sm:text-2xl font-bold text-primary-900 mb-2">{t('drawNames')}</h1>
+        <p className="text-primary-700/80 text-sm sm:text-base mb-5 sm:mb-6" aria-live="polite">
           {t('drawProgress', { drawn: drawn.length, total: participants.length })}
         </p>
 
-        {/* Progress bar */}
         <div
-          className="w-full h-2 bg-primary-100/80 rounded-full mb-6 overflow-hidden"
+          className="w-full h-2 bg-primary-100/80 rounded-full mb-5 sm:mb-6 overflow-hidden"
           role="progressbar"
           aria-valuenow={drawn.length}
           aria-valuemin={0}
@@ -261,7 +270,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
           />
         </div>
 
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 overflow-hidden mb-6">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 overflow-hidden mb-5 sm:mb-6">
           {participants.map((p) => {
             const hasDrawn = drawn.includes(p)
             const isRemoving = removing === p
@@ -281,18 +290,18 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                 <button
                   onClick={() => !hasDrawn && startTurn(p)}
                   disabled={hasDrawn}
-                  className="flex-1 flex items-center justify-between px-4 py-4"
+                  className="flex-1 flex items-center justify-between px-3 sm:px-4 py-3.5 sm:py-4"
                   aria-label={hasDrawn ? t('alreadyDrawn', { name: p }) : t('tapToDrawAria', { name: p })}
                 >
                   <span
-                    className={`font-medium transition-colors duration-150 ${hasDrawn ? 'text-primary-500' : 'text-primary-900'}`}
+                    className={`font-medium transition-colors duration-150 text-sm sm:text-base ${hasDrawn ? 'text-primary-500' : 'text-primary-900'}`}
                   >
                     {p}
                   </span>
                   {hasDrawn ? (
                     <span className="text-emerald-500 text-xl" aria-hidden="true">&#10003;</span>
                   ) : (
-                    <span className="text-primary-500 text-sm">{t('tapToDraw')}</span>
+                    <span className="text-primary-500 text-xs sm:text-sm">{t('tapToDraw')}</span>
                   )}
                 </button>
                 {!hasDrawn && canRemove && (
@@ -306,7 +315,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                         setRemoving(null)
                       }, 250)
                     }}
-                    className="pr-4 pl-2 py-4 text-primary-400 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
+                    className="pr-3 sm:pr-4 pl-2 py-3.5 sm:py-4 text-primary-400 hover:text-red-500 hover:scale-110 text-xl leading-none transition-[transform,background-color,box-shadow] duration-150"
                     aria-label={t('removeName', { name: p })}
                   >
                     &times;
@@ -325,12 +334,12 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder={t('addNewPlayer')}
-                className="flex-1 px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-lg transition-shadow duration-150"
+                className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-base sm:text-lg transition-shadow duration-150"
                 aria-label={t('newPlayerName')}
               />
               <button
                 type="submit"
-                className="px-5 py-3 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
+                className="px-4 sm:px-5 py-2.5 sm:py-3 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
               >
                 {t('add')}
               </button>
@@ -344,7 +353,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
         {allDrawn && (
           <button
             onClick={() => { successVibrate(); playSuccess(); onComplete() }}
-            className="w-full py-4 px-6 bg-accent-700 hover:bg-accent-800 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-accent-700/25 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
+            className="w-full py-3.5 sm:py-4 px-6 bg-accent-700 hover:bg-accent-800 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-accent-700/25 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
           >
             {t('allDoneViewResults')}
           </button>

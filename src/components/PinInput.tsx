@@ -1,17 +1,24 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, type ChangeEvent, type KeyboardEvent, type ClipboardEvent } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 
-export default function PinInput({ length = 4, onComplete, error, errorKey }) {
-  const [digits, setDigits] = useState(Array(length).fill(''))
+interface PinInputProps {
+  length?: number
+  onComplete: (value: string) => void
+  error?: string
+  errorKey?: number
+}
+
+export default function PinInput({ length = 4, onComplete, error, errorKey }: PinInputProps) {
+  const [digits, setDigits] = useState<string[]>(Array(length).fill(''))
   const [shaking, setShaking] = useState(false)
-  const refs = useRef([])
+  const refs = useRef<(HTMLInputElement | null)[]>([])
   const { t } = useLanguage()
 
   useEffect(() => {
     refs.current[0]?.focus()
   }, [])
 
-  function handleChange(index, value) {
+  function handleChange(index: number, value: string) {
     if (!/^\d*$/.test(value)) return
 
     const next = [...digits]
@@ -27,7 +34,7 @@ export default function PinInput({ length = 4, onComplete, error, errorKey }) {
     }
   }
 
-  function handleKeyDown(index, e) {
+  function handleKeyDown(index: number, e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Backspace' && !digits[index] && index > 0) {
       const next = [...digits]
       next[index - 1] = ''
@@ -36,7 +43,7 @@ export default function PinInput({ length = 4, onComplete, error, errorKey }) {
     }
   }
 
-  function handlePaste(e) {
+  function handlePaste(e: ClipboardEvent<HTMLDivElement>) {
     e.preventDefault()
     const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, length)
     if (!pasted) return
@@ -68,23 +75,23 @@ export default function PinInput({ length = 4, onComplete, error, errorKey }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="flex gap-3" dir="ltr" onPaste={handlePaste}>
+      <div className="flex gap-2.5 sm:gap-3" dir="ltr" onPaste={handlePaste}>
         {digits.map((digit, i) => (
           <input
             key={i}
-            ref={(el) => (refs.current[i] = el)}
+            ref={(el) => { refs.current[i] = el }}
             type="text"
             inputMode="numeric"
             maxLength={1}
             aria-label={t('pinDigit', { n: i + 1 })}
-            value={digit ? '●' : ''}
-            onChange={(e) => {
-              const raw = e.target.value.replace('●', '')
+            value={digit ? '\u25CF' : ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              const raw = e.target.value.replace('\u25CF', '')
               handleChange(i, raw)
             }}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onFocus={(e) => e.target.select()}
-            className={`w-14 h-16 text-center text-2xl font-bold rounded-xl border-2 bg-white focus:outline-none transition-all ${
+            className={`w-12 h-14 sm:w-14 sm:h-16 text-center text-xl sm:text-2xl font-bold rounded-xl border-2 bg-white focus:outline-none transition-all ${
               shaking
                 ? 'border-red-400 text-red-500 animate-shake'
                 : digit

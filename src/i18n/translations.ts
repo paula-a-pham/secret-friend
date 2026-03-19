@@ -1,4 +1,6 @@
-export const translations = {
+export type TranslationKey = keyof typeof translations.en
+
+export const translations: Record<string, Record<string, string>> = {
   en: {
     // Common
     secretFriend: 'Secret Friend',

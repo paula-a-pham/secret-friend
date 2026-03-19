@@ -1,13 +1,19 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 
-export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
-  const [names, setNames] = useState([])
+interface AddPlayersFormProps {
+  existingNames: string[]
+  onConfirm: (names: string[]) => void
+  onCancel: () => void
+}
+
+export default function AddPlayersForm({ existingNames, onConfirm, onCancel }: AddPlayersFormProps) {
+  const [names, setNames] = useState<string[]>([])
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
   const { t } = useLanguage()
 
-  function addName(e) {
+  function addName(e: FormEvent) {
     e.preventDefault()
     const trimmed = input.trim()
     if (!trimmed) return
@@ -21,7 +27,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
     setError('')
   }
 
-  function removeName(index) {
+  function removeName(index: number) {
     setNames(names.filter((_, i) => i !== index))
   }
 
@@ -37,9 +43,9 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
   const countText = t(countKey, { count: names.length })
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-4 mb-6 animate-fade-in">
-      <h2 className="text-lg font-bold text-primary-900 mb-1">{t('addNewPlayersTitle')}</h2>
-      <p className="text-primary-700/80 text-sm mb-4">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-3 sm:p-4 mb-6 animate-fade-in">
+      <h2 className="text-base sm:text-lg font-bold text-primary-900 mb-1">{t('addNewPlayersTitle')}</h2>
+      <p className="text-primary-700/80 text-xs sm:text-sm mb-3 sm:mb-4">
         {t('newPlayersDesc')}
       </p>
 
@@ -49,12 +55,12 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={t('enterName')}
-          className="flex-1 px-3 py-2 rounded-lg border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="flex-1 px-3 py-2 rounded-lg border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm sm:text-base"
           autoFocus
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-lg transition-[transform,background-color] duration-150"
+          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold rounded-lg transition-[transform,background-color] duration-150 text-sm sm:text-base"
         >
           {t('add')}
         </button>
@@ -90,14 +96,14 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }) {
       <div className="flex gap-2">
         <button
           onClick={onCancel}
-          className="flex-1 py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-[transform,background-color] duration-150"
+          className="flex-1 py-2.5 sm:py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-[transform,background-color] duration-150 text-sm sm:text-base"
         >
           {t('cancel')}
         </button>
         <button
           onClick={handleConfirm}
           disabled={names.length < 2}
-          className="flex-1 py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 disabled:bg-accent-200 disabled:text-accent-700 text-white font-semibold rounded-xl transition-[transform,background-color] duration-150"
+          className="flex-1 py-2.5 sm:py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 disabled:bg-accent-200 disabled:text-accent-700 text-white font-semibold rounded-xl transition-[transform,background-color] duration-150 text-sm sm:text-base"
         >
           {t('addAndDraw')}
         </button>

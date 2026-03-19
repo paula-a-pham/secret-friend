@@ -2,7 +2,17 @@ import { useState, useEffect } from 'react'
 import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 
-const particles = [
+interface Particle {
+  size: number
+  color: string
+  top: string
+  left?: string
+  right?: string
+  duration: string
+  delay: string
+}
+
+const particles: Particle[] = [
   { size: 8, color: '#fda4af', top: '12%', left: '10%', duration: '4s', delay: '0s' },
   { size: 12, color: '#fde68a', top: '20%', right: '14%', duration: '5s', delay: '1s' },
   { size: 6, color: '#fecdd3', top: '55%', left: '8%', duration: '4.5s', delay: '0.5s' },
@@ -11,7 +21,14 @@ const particles = [
   { size: 9, color: '#fde68a', top: '35%', right: '22%', duration: '4s', delay: '0.8s' },
 ]
 
-export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGame }) {
+interface HomeScreenProps {
+  onNewGame: () => void
+  onContinue: () => void
+  onReset: () => void
+  hasSavedGame: boolean
+}
+
+export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGame }: HomeScreenProps) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [closing, setClosing] = useState(false)
   const { t } = useLanguage()
@@ -32,14 +49,13 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
 
   useEffect(() => {
     if (!showConfirm || closing) return
-    const handleKey = (e) => { if (e.key === 'Escape') closeConfirm() }
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeConfirm() }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [showConfirm, closing])
 
   return (
-    <div className="min-h-svh flex flex-col items-center justify-center bg-gradient-to-b from-primary-50 to-accent-50 px-6 relative overflow-hidden">
-      {/* Decorative particles */}
+    <div className="min-h-svh flex flex-col items-center justify-center bg-gradient-to-b from-primary-50 to-accent-50 px-4 sm:px-6 relative overflow-hidden">
       {particles.map((p, i) => (
         <div
           key={i}
@@ -57,39 +73,36 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
         />
       ))}
 
-      <div className="flex flex-col items-center gap-6 relative z-10">
-        {/* Icon */}
+      <div className="flex flex-col items-center gap-5 sm:gap-6 relative z-10">
         <div className="animate-bounce-in-down" style={{ animationDuration: '0.65s' }}>
           <img
             src="/icon.svg"
             alt={t('giftBoxAlt')}
-            className="w-28 h-28 drop-shadow-lg animate-float"
+            className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-lg animate-float"
           />
         </div>
 
-        {/* Title + subtitle */}
         <div
           className="text-center animate-fade-in"
           style={{ animationDuration: '0.55s', animationDelay: '200ms' }}
         >
-          <h1 className="text-4xl font-bold text-primary-900 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-bold text-primary-900 tracking-tight">
             {t('secretFriend')}
           </h1>
-          <p className="mt-2 text-primary-700/80 text-lg">
+          <p className="mt-2 text-primary-700/80 text-base sm:text-lg">
             {t('tagline')}
           </p>
         </div>
 
-        {/* Buttons */}
         <div
-          className="flex flex-col gap-3 w-full max-w-xs mt-4 animate-fade-in"
+          className="flex flex-col gap-3 w-full max-w-[280px] sm:max-w-xs mt-3 sm:mt-4 animate-fade-in"
           style={{ animationDuration: '0.55s', animationDelay: '400ms' }}
           role="navigation"
           aria-label={t('gameOptions')}
         >
           <button
             onClick={() => { tapVibrate(); onNewGame() }}
-            className="w-full py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
+            className="w-full py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
           >
             {t('startNewGame')}
           </button>
@@ -98,7 +111,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
             <>
               <button
                 onClick={() => { tapVibrate(); onContinue() }}
-                className="w-full py-4 px-6 bg-white/70 backdrop-blur-sm hover:bg-white/90 active:scale-95 text-primary-700 font-semibold rounded-2xl text-lg shadow-md border border-white/30 transition-[transform,background-color,box-shadow] duration-150"
+                className="w-full py-3.5 sm:py-4 px-6 bg-white/70 backdrop-blur-sm hover:bg-white/90 active:scale-95 text-primary-700 font-semibold rounded-2xl text-base sm:text-lg shadow-md border border-white/30 transition-[transform,background-color,box-shadow] duration-150"
               >
                 {t('continueGame')}
               </button>
@@ -114,33 +127,32 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
         </div>
       </div>
 
-      {/* Reset confirmation popup */}
       {showConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-6"
+          className="fixed inset-0 z-50 flex items-end justify-center px-3 sm:px-4 pb-4 sm:pb-6"
           onClick={closeConfirm}
         >
           <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
 
           <div
-            className={`relative w-full max-w-sm bg-white rounded-2xl shadow-2xl p-6 ${closing ? 'animate-popup-out' : 'animate-popup-in'}`}
+            className={`relative w-full max-w-sm bg-white rounded-2xl shadow-2xl p-5 sm:p-6 ${closing ? 'animate-popup-out' : 'animate-popup-in'}`}
             onClick={(e) => e.stopPropagation()}
             role="alertdialog"
             aria-label={t('confirmReset')}
           >
-            <p className="text-primary-900 font-medium text-center mb-5">
+            <p className="text-primary-900 font-medium text-center mb-4 sm:mb-5 text-sm sm:text-base">
               {t('confirmDeleteMessage')}
             </p>
             <div className="flex gap-2">
               <button
                 onClick={closeConfirm}
-                className="flex-1 py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all"
+                className="flex-1 py-2.5 sm:py-3 px-4 bg-white hover:bg-primary-50 active:scale-95 text-primary-600 font-semibold rounded-xl border border-primary-200 transition-all text-sm sm:text-base"
               >
                 {t('cancel')}
               </button>
               <button
                 onClick={() => { tapVibrate(); onReset(); closeConfirm() }}
-                className="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150"
+                className="flex-1 py-2.5 sm:py-3 px-4 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-xl transition-[transform,background-color,box-shadow] duration-150 text-sm sm:text-base"
               >
                 {t('reset')}
               </button>

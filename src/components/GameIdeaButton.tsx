@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type MouseEvent } from 'react'
 import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 
@@ -8,20 +8,20 @@ export default function GameIdeaButton() {
   const [closingInfo, setClosingInfo] = useState(false)
   const { t, lang, toggleLanguage } = useLanguage()
 
-  function toggleMenu(e) {
+  function toggleMenu(e: MouseEvent) {
     e.stopPropagation()
     tapVibrate()
     setExpanded((prev) => !prev)
   }
 
-  function handleLanguage(e) {
+  function handleLanguage(e: MouseEvent) {
     e.stopPropagation()
     tapVibrate()
     toggleLanguage()
     setExpanded(false)
   }
 
-  function handleInfo(e) {
+  function handleInfo(e: MouseEvent) {
     e.stopPropagation()
     tapVibrate()
     setExpanded(false)
@@ -38,7 +38,7 @@ export default function GameIdeaButton() {
   }
 
   useEffect(() => {
-    function handleKey(e) {
+    function handleKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return
       if (showInfo && !closingInfo) handleCloseInfo()
       else if (expanded) setExpanded(false)
@@ -49,7 +49,6 @@ export default function GameIdeaButton() {
 
   return (
     <>
-      {/* Click-outside overlay */}
       {expanded && (
         <div
           className="fixed inset-0 z-40"
@@ -57,11 +56,8 @@ export default function GameIdeaButton() {
         />
       )}
 
-      {/* FAB group */}
-      <div className="fixed bottom-5 right-5 z-50">
-        {/* Sub-actions */}
+      <div className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50">
         <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 flex flex-col items-center gap-3 ${expanded ? '' : 'pointer-events-none'}`}>
-          {/* How to play — further from FAB */}
           <button
             onClick={handleInfo}
             className={`w-10 h-10 bg-white text-primary-700 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:bg-primary-50 ${
@@ -79,7 +75,6 @@ export default function GameIdeaButton() {
             </svg>
           </button>
 
-          {/* Language toggle — closest to FAB */}
           <button
             onClick={handleLanguage}
             className={`w-10 h-10 bg-white text-primary-700 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:bg-primary-50 text-xs font-bold ${
@@ -96,7 +91,6 @@ export default function GameIdeaButton() {
           </button>
         </div>
 
-        {/* Main FAB */}
         <button
           onClick={toggleMenu}
           className="w-12 h-12 bg-accent-700 hover:bg-accent-800 active:scale-90 text-white rounded-full shadow-lg shadow-accent-700/30 flex items-center justify-center transition-all duration-200"
@@ -117,31 +111,28 @@ export default function GameIdeaButton() {
         </button>
       </div>
 
-      {/* Info popup overlay */}
       {showInfo && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-6"
+          className="fixed inset-0 z-50 flex items-end justify-center px-3 sm:px-4 pb-4 sm:pb-6"
           onClick={handleCloseInfo}
         >
-          {/* Backdrop */}
           <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closingInfo ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
 
-          {/* Card */}
           <div
-            className={`relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6 overflow-y-auto max-h-[80vh] scrollbar-hide ${closingInfo ? 'animate-popup-out' : 'animate-popup-in'}`}
+            className={`relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 overflow-y-auto max-h-[80vh] scrollbar-hide ${closingInfo ? 'animate-popup-out' : 'animate-popup-in'}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-center mb-4">
+            <div className="text-center mb-3 sm:mb-4">
               <span className="text-xs font-semibold uppercase tracking-wider text-accent-700">
                 {t('howToPlay')}
               </span>
             </div>
 
-            <h3 className="text-xl font-bold text-primary-900 mb-3 text-center">
+            <h3 className="text-lg sm:text-xl font-bold text-primary-900 mb-3 text-center">
               🎁 {t('secretFriend')} 🎁
             </h3>
 
-            <div className="space-y-4 text-sm text-primary-700/80 leading-relaxed">
+            <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-primary-700/80 leading-relaxed">
               <div>
                 <h4 className="font-semibold text-primary-900 mb-1 text-center">{t('whatIsIt')}</h4>
                 <p className="text-center">
@@ -176,10 +167,10 @@ export default function GameIdeaButton() {
               </div>
             </div>
 
-            <div className="flex gap-2 mt-5">
+            <div className="flex gap-2 mt-4 sm:mt-5">
               <button
                 onClick={handleCloseInfo}
-                className="flex-1 py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 text-white font-semibold rounded-xl text-sm transition-all duration-150"
+                className="flex-1 py-2.5 sm:py-3 px-4 bg-accent-700 hover:bg-accent-800 active:scale-95 text-white font-semibold rounded-xl text-sm transition-all duration-150"
               >
                 {t('gotIt')}
               </button>

@@ -1,6 +1,8 @@
+import type { GameState } from '../types'
+
 const STORAGE_KEY = 'secret-friend-game'
 
-export function loadGame() {
+export function loadGame(): GameState | null {
   try {
     const data = localStorage.getItem(STORAGE_KEY)
     return data ? JSON.parse(data) : null
@@ -9,7 +11,7 @@ export function loadGame() {
   }
 }
 
-export function saveGame(game) {
+export function saveGame(game: GameState): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(game))
   } catch {
@@ -17,6 +19,6 @@ export function saveGame(game) {
   }
 }
 
-export function clearGame() {
+export function clearGame(): void {
   localStorage.removeItem(STORAGE_KEY)
 }
