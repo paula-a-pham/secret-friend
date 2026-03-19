@@ -100,6 +100,8 @@ export const translations: Record<string, Record<string, string>> = {
     // FAB
     menu: 'Menu',
     close: 'Close',
+    muteSound: 'Mute sounds',
+    unmuteSound: 'Unmute sounds',
 
     // PIN Input
     pinDigit: 'PIN digit {n}',
@@ -204,6 +206,8 @@ export const translations: Record<string, Record<string, string>> = {
     // FAB
     menu: '\u0627\u0644\u0642\u0627\u0626\u0645\u0629',
     close: '\u0625\u063a\u0644\u0627\u0642',
+    muteSound: '\u0643\u062a\u0645 \u0627\u0644\u0635\u0648\u062a',
+    unmuteSound: '\u062a\u0634\u063a\u064a\u0644 \u0627\u0644\u0635\u0648\u062a',
 
     // PIN Input
     pinDigit: '\u0631\u0642\u0645 PIN {n}',

@@ -1,10 +1,12 @@
 import { useState, useEffect, type MouseEvent } from 'react'
+import { isMuted, toggleMute } from '../utils/sounds'
 import { useLanguage } from '../i18n/LanguageContext'
 
 export default function GameIdeaButton() {
   const [expanded, setExpanded] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
   const [closingInfo, setClosingInfo] = useState(false)
+  const [soundMuted, setSoundMuted] = useState(isMuted)
   const { t, lang, toggleLanguage } = useLanguage()
 
   function toggleMenu(e: MouseEvent) {
@@ -16,6 +18,11 @@ export default function GameIdeaButton() {
     e.stopPropagation()
     toggleLanguage()
     setExpanded(false)
+  }
+
+  function handleSound(e: MouseEvent) {
+    e.stopPropagation()
+    setSoundMuted(toggleMute())
   }
 
   function handleInfo(e: MouseEvent) {
@@ -61,7 +68,7 @@ export default function GameIdeaButton() {
                 ? 'opacity-100 scale-100 translate-y-0'
                 : 'opacity-0 scale-75 translate-y-4'
             }`}
-            style={{ transitionDelay: expanded ? '80ms' : '0ms' }}
+            style={{ transitionDelay: expanded ? '120ms' : '0ms' }}
             aria-label={t('howToPlay')}
             title={t('howToPlay')}
             tabIndex={expanded ? 0 : -1}
@@ -69,6 +76,30 @@ export default function GameIdeaButton() {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
               <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7ZM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z" />
             </svg>
+          </button>
+
+          <button
+            onClick={handleSound}
+            className={`w-10 h-10 bg-white text-primary-700 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:bg-primary-50 ${
+              expanded
+                ? 'opacity-100 scale-100 translate-y-0'
+                : 'opacity-0 scale-75 translate-y-4'
+            }`}
+            style={{ transitionDelay: expanded ? '80ms' : '0ms' }}
+            aria-label={soundMuted ? t('unmuteSound') : t('muteSound')}
+            title={soundMuted ? t('unmuteSound') : t('muteSound')}
+            tabIndex={expanded ? 0 : -1}
+          >
+            {soundMuted ? (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM17.78 9.22a.75.75 0 1 0-1.06 1.06L18.44 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L20.56 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" />
+                <path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" />
+              </svg>
+            )}
           </button>
 
           <button

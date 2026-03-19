@@ -1,4 +1,13 @@
 let ctx: AudioContext | null = null
+let muted = localStorage.getItem('soundMuted') === 'true'
+
+export function isMuted(): boolean { return muted }
+
+export function toggleMute(): boolean {
+  muted = !muted
+  localStorage.setItem('soundMuted', String(muted))
+  return muted
+}
 
 function getCtx(): AudioContext {
   if (!ctx) ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
@@ -8,6 +17,7 @@ function getCtx(): AudioContext {
 
 function playNote(freq: number, duration: number, volume = 0.1, type: OscillatorType = 'sine', delay = 0): void {
   try {
+    if (muted) return
     const c = getCtx()
     const osc = c.createOscillator()
     const gain = c.createGain()
