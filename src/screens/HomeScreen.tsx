@@ -129,7 +129,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
 
       {showConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center px-3 sm:px-4 pb-4 sm:pb-6"
+          className="fixed inset-0 z-[60] flex items-end justify-center px-3 sm:px-4 pb-4 sm:pb-6"
           onClick={closeConfirm}
         >
           <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
