@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type ChangeEvent, type KeyboardEvent, type ClipboardEvent } from 'react'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 
 interface PinInputProps {
   length?: number
@@ -11,12 +11,32 @@ interface PinInputProps {
 export default function PinInput({ length = 4, onComplete, error, errorKey }: PinInputProps) {
   const [digits, setDigits] = useState<string[]>(Array(length).fill(''))
   const [shaking, setShaking] = useState(false)
+  const [lastErrorKey, setLastErrorKey] = useState(errorKey)
   const refs = useRef<(HTMLInputElement | null)[]>([])
   const { t } = useLanguage()
 
   useEffect(() => {
     refs.current[0]?.focus()
   }, [])
+
+  // Adjust state during render when errorKey changes (React-recommended pattern)
+  if (errorKey !== lastErrorKey) {
+    setLastErrorKey(errorKey)
+    if (error) {
+      setShaking(true)
+      setDigits(Array(length).fill(''))
+    }
+  }
+
+  // Clear shaking after animation completes
+  useEffect(() => {
+    if (!shaking) return
+    const timer = setTimeout(() => {
+      setShaking(false)
+      refs.current[0]?.focus()
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [shaking])
 
   function handleChange(index: number, value: string) {
     if (!/^\d*$/.test(value)) return
@@ -61,17 +81,6 @@ export default function PinInput({ length = 4, onComplete, error, errorKey }: Pi
       onComplete(next.join(''))
     }
   }
-
-  useEffect(() => {
-    if (!error) return
-    setShaking(true)
-    setDigits(Array(length).fill(''))
-    const timer = setTimeout(() => {
-      setShaking(false)
-      refs.current[0]?.focus()
-    }, 400)
-    return () => clearTimeout(timer)
-  }, [errorKey])
 
   return (
     <div className="flex flex-col items-center gap-3">

@@ -1,14 +1,6 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
+import { useState, useCallback, useEffect, type ReactNode } from 'react'
 import { translations } from './translations'
-
-interface LanguageContextValue {
-  lang: string
-  t: (key: string, params?: Record<string, string | number>) => string
-  toggleLanguage: () => void
-  isRtl: boolean
-}
-
-const LanguageContext = createContext<LanguageContextValue | null>(null)
+import { LanguageContext } from './context'
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState(() => localStorage.getItem('sf-lang') || 'en')
@@ -44,10 +36,4 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       {children}
     </LanguageContext.Provider>
   )
-}
-
-export function useLanguage(): LanguageContextValue {
-  const ctx = useContext(LanguageContext)
-  if (!ctx) throw new Error('useLanguage must be used within LanguageProvider')
-  return ctx
 }
