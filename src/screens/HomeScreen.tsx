@@ -64,6 +64,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
               src="/icon.svg"
               alt={t('giftBoxAlt')}
               className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-lg animate-float"
+              fetchPriority="high"
             />
           </div>
 
