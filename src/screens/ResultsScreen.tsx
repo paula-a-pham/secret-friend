@@ -2,7 +2,7 @@ import { useState } from 'react'
 import AddPlayersForm from '../components/AddPlayersForm'
 import PinInput from '../components/PinInput'
 import { playFlip, playSuccess } from '../utils/sounds'
-import { tapVibrate, successVibrate } from '../utils/haptics'
+import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 import type { GameState } from '../types'
 
@@ -79,7 +79,6 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }: ResultsScr
 
   function handlePinComplete(value: string) {
     if (value === pin) {
-      successVibrate()
       playSuccess()
       setPinSuccess(true)
       setTimeout(() => {
@@ -87,6 +86,7 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }: ResultsScr
         setError(null)
       }, 800)
     } else {
+      tapVibrate()
       setError({ message: t('wrongPin'), key: Date.now() })
     }
   }
@@ -162,12 +162,12 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }: ResultsScr
         {showAddPlayers ? (
           <AddPlayersForm
             existingNames={participants}
-            onConfirm={(names) => { tapVibrate(); onAddPlayers(names); setShowAddPlayers(false) }}
+            onConfirm={(names) => { onAddPlayers(names); setShowAddPlayers(false) }}
             onCancel={() => setShowAddPlayers(false)}
           />
         ) : (
           <button
-            onClick={() => { tapVibrate(); setShowAddPlayers(true) }}
+            onClick={() => setShowAddPlayers(true)}
             className="w-full mb-5 sm:mb-6 py-2.5 sm:py-3 px-6 bg-white/70 backdrop-blur-sm hover:bg-white/90 active:scale-95 text-primary-600 font-medium rounded-2xl text-sm sm:text-base border border-dashed border-primary-300/50 transition-[transform,background-color] duration-150"
           >
             {t('addNewPlayersBtn')}
@@ -175,7 +175,7 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }: ResultsScr
         )}
 
         <button
-          onClick={() => { tapVibrate(); onBack() }}
+          onClick={onBack}
           className="w-full py-3.5 sm:py-4 px-6 bg-primary-600 hover:bg-primary-700 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-primary-200 transition-[transform,background-color,box-shadow] duration-150"
         >
           {t('home')}

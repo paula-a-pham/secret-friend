@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react'
 import PinInput from '../components/PinInput'
-import { tapVibrate, successVibrate } from '../utils/haptics'
 import { playSuccess } from '../utils/sounds'
 import { useLanguage } from '../i18n/LanguageContext'
 
@@ -23,7 +22,6 @@ export default function SetupScreen({ step, pin = '', onPinSet, onStart, onBack,
 
   function handlePinComplete(value: string) {
     setError('')
-    successVibrate()
     playSuccess()
     setPinSuccess(true)
     setTimeout(() => onPinSet(value), 800)
@@ -37,7 +35,6 @@ export default function SetupScreen({ step, pin = '', onPinSet, onStart, onBack,
       setError(t('nameAlreadyAdded'))
       return
     }
-    tapVibrate()
     setParticipants([...participants, trimmed])
     setName('')
     setError('')
@@ -45,7 +42,6 @@ export default function SetupScreen({ step, pin = '', onPinSet, onStart, onBack,
 
   function removeParticipant(index: number) {
     if (removing !== null) return
-    tapVibrate()
     setRemoving(index)
     setTimeout(() => {
       setParticipants((prev) => prev.filter((_, i) => i !== index))
@@ -58,7 +54,6 @@ export default function SetupScreen({ step, pin = '', onPinSet, onStart, onBack,
       setError(t('needAtLeast3'))
       return
     }
-    tapVibrate()
     onStart(participants, pin)
   }
 

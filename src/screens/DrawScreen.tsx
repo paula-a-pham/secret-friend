@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, type FormEvent } from 'react'
 import confetti from 'canvas-confetti'
 import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
 import { playTick, playReveal, playSuccess } from '../utils/sounds'
-import { tapVibrate, revealVibrate, successVibrate } from '../utils/haptics'
+import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 import type { GameState, Assignments } from '../types'
 
@@ -46,20 +46,17 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
       setAddError(t('nameAlreadyExists'))
       return
     }
-    tapVibrate()
     onAddPlayer(trimmed)
     setNewName('')
     setAddError('')
   }
 
   function startTurn(person: string) {
-    tapVibrate()
     setCurrentPerson(person)
     setPhase('privacy')
   }
 
   function startDraw() {
-    tapVibrate()
     setPhase('shuffling')
 
     let finalName: string
@@ -101,6 +98,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
         setDisplayName(poolForDisplay[randomIdx])
         setShuffleProgress(progress)
         playTick()
+        tapVibrate()
         lastUpdate = elapsed
       }
 
@@ -117,7 +115,6 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
   }
 
   function handleAccept() {
-    tapVibrate()
     onAccept(currentPerson!, drawnName!, swapData)
     setPhase('list')
     setCurrentPerson(null)
@@ -138,7 +135,6 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
   useEffect(() => {
     if (phase !== 'reveal') return
     playReveal()
-    revealVibrate()
     const end = Date.now() + 1500
     const colors = ['#e11d48', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#f97316']
     function frame() {
@@ -308,7 +304,6 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
                   <button
                     onClick={() => {
                       if (removing !== null) return
-                      tapVibrate()
                       setRemoving(p)
                       setTimeout(() => {
                         onRemovePlayer(p)
@@ -352,7 +347,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
 
         {allDrawn && (
           <button
-            onClick={() => { successVibrate(); playSuccess(); onComplete() }}
+            onClick={() => { playSuccess(); onComplete() }}
             className="w-full py-3.5 sm:py-4 px-6 bg-accent-700 hover:bg-accent-800 hover:shadow-xl active:scale-95 text-white font-semibold rounded-2xl text-base sm:text-lg shadow-lg shadow-accent-700/25 transition-[transform,background-color,box-shadow] duration-150 animate-pop-in"
           >
             {t('allDoneViewResults')}

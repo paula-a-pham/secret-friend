@@ -1,5 +1,4 @@
 import { useState, useEffect, type MouseEvent } from 'react'
-import { tapVibrate } from '../utils/haptics'
 import { useLanguage } from '../i18n/LanguageContext'
 
 export default function GameIdeaButton() {
@@ -10,20 +9,17 @@ export default function GameIdeaButton() {
 
   function toggleMenu(e: MouseEvent) {
     e.stopPropagation()
-    tapVibrate()
     setExpanded((prev) => !prev)
   }
 
   function handleLanguage(e: MouseEvent) {
     e.stopPropagation()
-    tapVibrate()
     toggleLanguage()
     setExpanded(false)
   }
 
   function handleInfo(e: MouseEvent) {
     e.stopPropagation()
-    tapVibrate()
     setExpanded(false)
     setShowInfo(true)
     setClosingInfo(false)
