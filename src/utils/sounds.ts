@@ -1,11 +1,12 @@
 let ctx: AudioContext | null = null
-let muted = localStorage.getItem('soundMuted') === 'true'
+let muted = false
+try { muted = localStorage.getItem('soundMuted') === 'true' } catch { /* storage unavailable */ }
 
 export function isMuted(): boolean { return muted }
 
 export function toggleMute(): boolean {
   muted = !muted
-  localStorage.setItem('soundMuted', String(muted))
+  try { localStorage.setItem('soundMuted', String(muted)) } catch { /* storage unavailable */ }
   return muted
 }
 

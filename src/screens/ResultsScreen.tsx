@@ -19,7 +19,7 @@ function FlipCard({ giver, recipient, isRevealed, onFlip, delay = 0 }: FlipCardP
   return (
     <div
       onClick={onFlip}
-      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onFlip()}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFlip() } }}
       role="button"
       tabIndex={0}
       aria-label={isRevealed ? t('givesTo', { giver, recipient }) : t('revealPerson', { name: giver })}

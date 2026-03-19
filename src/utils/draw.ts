@@ -12,9 +12,12 @@ export function drawRandom(available: string[]): string | null {
 
 export function performSwap(assignments: Assignments, currentPerson: string): { drawnName: string; updatedAssignments: Assignments } | null {
   const givers = Object.keys(assignments)
-  if (givers.length === 0) return null
+  // Filter out givers whose recipient is currentPerson — swapping with them
+  // would cause currentPerson to draw themselves
+  const eligible = givers.filter((g) => assignments[g] !== currentPerson)
+  if (eligible.length === 0) return null
 
-  const swapWith = givers[Math.floor(Math.random() * givers.length)]
+  const swapWith = eligible[Math.floor(Math.random() * eligible.length)]
   const theirRecipient = assignments[swapWith]
 
   return {
