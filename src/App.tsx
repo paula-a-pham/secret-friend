@@ -3,9 +3,9 @@ import { loadGame, saveGame, clearGame } from './utils/storage'
 import { LanguageProvider } from './i18n/LanguageContext'
 import GameIdeaButton from './components/GameIdeaButton'
 import ReloadPrompt from './components/ReloadPrompt'
+import HomeScreen from './screens/HomeScreen'
 import type { GameState, Assignments } from './types'
 
-const HomeScreen = lazy(() => import('./screens/HomeScreen'))
 const SetupScreen = lazy(() => import('./screens/SetupScreen'))
 const DrawScreen = lazy(() => import('./screens/DrawScreen'))
 const ResultsScreen = lazy(() => import('./screens/ResultsScreen'))
