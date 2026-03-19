@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
-import confetti from 'canvas-confetti'
 import { getAvailableRecipients, drawRandom, performSwap } from '../utils/draw'
 import { playTick, playReveal, playSuccess } from '../utils/sounds'
 import { tapVibrate } from '../utils/haptics'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import type { GameState, Assignments } from '../types'
 
 const SHUFFLE_DURATION = 2000
@@ -135,26 +134,30 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
   useEffect(() => {
     if (phase !== 'reveal') return
     playReveal()
-    const end = Date.now() + 1500
-    const colors = ['#e11d48', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#f97316']
-    function frame() {
-      confetti({
-        particleCount: 3,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.6 },
-        colors,
-      })
-      confetti({
-        particleCount: 3,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.6 },
-        colors,
-      })
-      if (Date.now() < end) requestAnimationFrame(frame)
-    }
-    frame()
+    let rafId: number
+    import('canvas-confetti').then(({ default: confetti }) => {
+      const end = Date.now() + 1500
+      const colors = ['#e11d48', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#f97316']
+      function frame() {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.6 },
+          colors,
+        })
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.6 },
+          colors,
+        })
+        if (Date.now() < end) rafId = requestAnimationFrame(frame)
+      }
+      rafId = requestAnimationFrame(frame)
+    })
+    return () => { if (rafId) cancelAnimationFrame(rafId) }
   }, [phase])
 
   if (phase === 'shuffling' || phase === 'reveal') {
@@ -215,7 +218,7 @@ export default function DrawScreen({ game, onAccept, onComplete, onAddPlayer, on
       <div className="min-h-svh bg-gradient-to-b from-primary-50 to-accent-50 flex flex-col items-center justify-center px-4 sm:px-6">
         <div className="animate-fade-in text-center max-w-sm">
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary-100/80 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 sm:mb-6">
-            <span className="text-2xl sm:text-3xl">🤫</span>
+            <span className="text-2xl sm:text-3xl" aria-hidden="true">🤫</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-primary-900 mb-2">
             {t('handDeviceTo')}

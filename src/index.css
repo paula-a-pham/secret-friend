@@ -304,6 +304,18 @@ button:disabled {
   display: none;
 }
 
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .particle { display: none; }
+  .shuffle-card { animation: none; }
+  .animate-float { animation: none; }
+}
+
 /* RTL animation overrides */
 @keyframes list-item-in-rtl {
   from { opacity: 0; transform: translateX(20px); }

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 
 interface AddPlayersFormProps {
   existingNames: string[]
@@ -57,6 +57,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }: A
           placeholder={t('enterName')}
           className="flex-1 px-3 py-2 rounded-lg border border-primary-200 bg-white text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm sm:text-base"
           autoFocus
+          aria-label={t('enterName')}
         />
         <button
           type="submit"
@@ -77,6 +78,7 @@ export default function AddPlayersForm({ existingNames, onConfirm, onCancel }: A
               <button
                 onClick={() => removeName(i)}
                 className="text-primary-400 hover:text-red-500 text-lg leading-none transition-colors"
+                aria-label={t('removeName', { name })}
               >
                 &times;
               </button>

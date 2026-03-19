@@ -97,7 +97,7 @@ export default function App() {
       let participants = prev.participants.filter((p) => p !== name)
       let pool = prev.pool.filter((p) => p !== name)
       const assignments = { ...prev.assignments }
-      let drawn = [...prev.drawn]
+      const drawn = [...prev.drawn]
 
       for (const giver of Object.keys(assignments)) {
         if (assignments[giver] === name) {
@@ -210,7 +210,9 @@ export default function App() {
 
   return (
     <LanguageProvider>
-      {screen}
+      <main>
+        {screen}
+      </main>
       <GameIdeaButton />
     </LanguageProvider>
   )

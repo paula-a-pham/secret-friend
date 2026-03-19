@@ -1,6 +1,6 @@
 import { useState, useEffect, type MouseEvent } from 'react'
 import { isMuted, toggleMute } from '../utils/sounds'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 
 export default function GameIdeaButton() {
   const [expanded, setExpanded] = useState(false)
@@ -148,6 +148,8 @@ export default function GameIdeaButton() {
           <div
             className={`relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 overflow-y-auto max-h-[80vh] scrollbar-hide ${closingInfo ? 'animate-popup-out' : 'animate-popup-in'}`}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label={t('howToPlay')}
           >
             <div className="text-center mb-3 sm:mb-4">
               <span className="text-xs font-semibold uppercase tracking-wider text-accent-700">

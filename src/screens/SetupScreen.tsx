@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import PinInput from '../components/PinInput'
 import { playSuccess } from '../utils/sounds'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 
 interface SetupScreenProps {
   step: 'pin' | 'players'
@@ -81,7 +81,7 @@ export default function SetupScreen({ step, pin = '', onPinSet, onStart, onBack,
           ) : (
             <>
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary-100/80 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 sm:mb-6">
-                <span className="text-2xl sm:text-3xl">🔑</span>
+                <span className="text-2xl sm:text-3xl" aria-hidden="true">🔑</span>
               </div>
               <h1 className="text-xl sm:text-2xl font-bold text-primary-900 mb-2">
                 {t('setOrganizerPin')}

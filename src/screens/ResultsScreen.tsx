@@ -3,7 +3,7 @@ import AddPlayersForm from '../components/AddPlayersForm'
 import PinInput from '../components/PinInput'
 import { playFlip, playSuccess } from '../utils/sounds'
 import { tapVibrate } from '../utils/haptics'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import type { GameState } from '../types'
 
 interface FlipCardProps {
@@ -118,7 +118,7 @@ export default function ResultsScreen({ game, onBack, onAddPlayers }: ResultsScr
           ) : (
             <>
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary-100/80 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 sm:mb-6">
-                <span className="text-2xl sm:text-3xl">🔒</span>
+                <span className="text-2xl sm:text-3xl" aria-hidden="true">🔒</span>
               </div>
               <h1 className="text-xl sm:text-2xl font-bold text-primary-900 mb-2">
                 {t('viewResults')}

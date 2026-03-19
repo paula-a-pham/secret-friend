@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useLanguage } from '../i18n/useLanguage'
 
 interface Particle {
   size: number
@@ -30,6 +30,8 @@ interface HomeScreenProps {
 export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGame }: HomeScreenProps) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [closing, setClosing] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const resetTriggerRef = useRef<HTMLButtonElement>(null)
   const { t } = useLanguage()
 
   function openConfirm() {
@@ -37,20 +39,34 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
     setClosing(false)
   }
 
-  function closeConfirm() {
+  const closeConfirm = useCallback(() => {
     setClosing(true)
     setTimeout(() => {
       setShowConfirm(false)
       setClosing(false)
+      resetTriggerRef.current?.focus()
     }, 250)
-  }
+  }, [])
 
   useEffect(() => {
     if (!showConfirm || closing) return
-    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeConfirm() }
+    const dialog = dialogRef.current
+    if (dialog) {
+      const firstBtn = dialog.querySelector<HTMLButtonElement>('button')
+      firstBtn?.focus()
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') { closeConfirm(); return }
+      if (e.key !== 'Tab' || !dialog) return
+      const focusable = dialog.querySelectorAll<HTMLElement>('button, [tabindex]:not([tabindex="-1"])')
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [showConfirm, closing])
+  }, [showConfirm, closing, closeConfirm])
 
   return (
     <>
@@ -116,6 +132,7 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
                 </button>
 
                 <button
+                  ref={resetTriggerRef}
                   onClick={openConfirm}
                   className="w-full py-3 px-6 text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-150"
                 >
@@ -135,12 +152,14 @@ export default function HomeScreen({ onNewGame, onContinue, onReset, hasSavedGam
           <div className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] ${closing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`} />
 
           <div
+            ref={dialogRef}
             className={`relative w-full max-w-sm bg-white rounded-2xl shadow-2xl p-5 sm:p-6 ${closing ? 'animate-popup-out' : 'animate-popup-in'}`}
             onClick={(e) => e.stopPropagation()}
             role="alertdialog"
             aria-label={t('confirmReset')}
+            aria-describedby="confirm-reset-msg"
           >
-            <p className="text-primary-900 font-medium text-center mb-4 sm:mb-5 text-sm sm:text-base">
+            <p id="confirm-reset-msg" className="text-primary-900 font-medium text-center mb-4 sm:mb-5 text-sm sm:text-base">
               {t('confirmDeleteMessage')}
             </p>
             <div className="flex gap-2">
