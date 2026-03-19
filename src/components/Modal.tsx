@@ -57,6 +57,7 @@ export default function Modal({
     if (dialog) {
       const firstBtn = dialog.querySelector<HTMLButtonElement>('button')
       firstBtn?.focus()
+      dialog.scrollTop = 0
     }
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') { close(); return }
